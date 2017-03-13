@@ -87,6 +87,7 @@ if __name__ == "__main__":
     spark = SparkSession \
         .builder \
         .appName("Python Spark SQL basic example") \
+        .config("spark.sql.warehouse.dir", "logs/spark-warehouse") \
         .getOrCreate()
     # $example off:init_session$
 
