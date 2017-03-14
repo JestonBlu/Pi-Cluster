@@ -84,10 +84,10 @@ def programmatic_schema_example(spark):
 
 if __name__ == "__main__":
     # $example on:init_session$
-    spark = SparkSession \
-        .builder \
-        .appName("Python Spark SQL basic example") \
-        .config("spark.sql.warehouse.dir", "logs/spark-warehouse") \
+    spark = SparkSession
+        .builder
+        .appName("Python Spark SQL basic example")
+        .config("spark.sql.warehouse.dir", "logs/spark-warehouse")
         .getOrCreate()
     # $example off:init_session$
 
