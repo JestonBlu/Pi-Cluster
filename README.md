@@ -9,6 +9,9 @@
 
 This repo is being used to document my project for building a small raspberry pi cluster running spark.
 
+**The guide I mainly followed**
+http://makezine.com/projects/build-a-compact-4-node-raspberry-pi-cluster/
+
 
 # Set up Environmental variables
 
