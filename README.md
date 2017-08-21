@@ -7,10 +7,20 @@
 
 # PySpark Raspberry Pi Cluster Project
 
-This repo is being used to document my project for building a small raspberry pi cluster running spark.
+This repo is being used to document my project for building a small raspberry pi cluster running spark. Similar to [this article](http://makezine.com/projects/build-a-compact-4-node-raspberry-pi-cluster/) which I used as a guide, I only wanted to have to use a single wall plug for the entire setup.
 
-**The guide I mainly followed**
-http://makezine.com/projects/build-a-compact-4-node-raspberry-pi-cluster/
+# Shopping List
+* 3 - Raspberry Pi 3b
+* 1 - GeauxRobot Raspberry Pi 3 Model B 4-layer Dog Bone Stack (case)
+* 1 - Anker PowerPort 6 (60W 6-Port USB Charging Hub) (power supply)
+* 1 - Black Box USB-Powered 10/100 5-Port Switch
+* 3 - 6" Ethernet Network Cable
+
+# Assembly
+
+1) Assemble the pi's and case. (I only used 3 of the 4 levels since I bought 3 pi's)
+![](images/img01.png)
+
 
 
 # Set up Environmental variables
