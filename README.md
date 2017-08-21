@@ -19,7 +19,7 @@ This repo is being used to document my project for building a small raspberry pi
 # Assembly
 
 1) Assemble the pi's and case. (I only used 3 of the 4 levels since I bought 3 pi's)
-![](images/img01.png)
+![](images/img01.jpg)
 
 
 
