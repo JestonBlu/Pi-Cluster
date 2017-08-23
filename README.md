@@ -39,7 +39,53 @@ This repo is being used to document my project for building a small raspberry pi
 6) Attach the USB cable to the network switch power input
 ![](images/img08.jpg)
 
+# Setting up the OS
+I already use arch on my desktop so im using that on the Pi's. The arch documentation for downloading and setting up the ARM OS is straightfoward so I will not repeat it, but the link to the site is [here](https://archlinuxarm.org/platforms/armv8/broadcom/raspberry-pi-3).
 
+After booting up the first pi with a working arch install, the first thing I did was set up an internet connection. On my arch desktop I use Network Manager and the nm-applet. It is very easy to share the internet through this app. Simply create a new connection, on the IPv4 and IPv6 tabs change the method to `Shared to other computers`. Network manager automatically assigns an ip address to the pi. With the pi already plugged in to the switch the eth0 interfaces automatically turns on at boot and there is a working internet connection immediately.
+
+The next thing I did was install some packages
+
+```sh
+# Assuming you are root
+pacman -S base-devel bash-completion
+```
+
+Uncomment `en_US.UTF-8` in `/etc/locale.gen`, then run
+```sh
+locale-gen
+echo LANG=en_US.UTF-8 > /etc/locale.conf
+export LANG=en_US.UTF-8
+```
+
+Set the time zone
+```sh
+ln -s /usr/share/zoneinfo/America/Chicago > /etc/localtime
+```
+
+Set the host name
+```sh
+echo pi1 > /etc/hostname
+```
+
+
+
+
+
+Set up a new user and change passwords.
+
+```sh
+# Assuming you are root, change the root password
+passwd
+
+# Add a new user and change password
+useradd -m -g users -G wheel,storage,power -s /bin/bash someusername
+passwd someusername
+
+# Delete the default user alarm
+userdel -r alarm
+
+```
 
 
 
