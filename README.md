@@ -1,18 +1,16 @@
-<!-- TOC depthFrom:1 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
-
 - [PySpark Raspberry Pi Cluster Project](#pyspark-raspberry-pi-cluster-project)
 - [Shopping List](#shopping-list)
 - [Assembly](#assembly)
-- [Set up Environmental variables](#set-up-environmental-variables)
-
-<!-- /TOC -->
+- [Setting up the OS](#setting-up-the-os)
+- [Configuring the Network](#configuring-the-network)
+- [Setting up Spark](#setting-up-spark)
 
 # PySpark Raspberry Pi Cluster Project
 
 This repo is being used to document my project for building a small raspberry pi cluster running spark. Similar to [this article](http://makezine.com/projects/build-a-compact-4-node-raspberry-pi-cluster/) which I used as a guide, I only wanted to have to use a single wall plug for the entire setup. I also wanted to minimize the footprint of the cluster. In this example all of the devices except for the USB hub are powered by USB.
 
 # Shopping List
-* 3 - Raspberry Pi 3b
+* 3 - Raspberry Pi 3b, (i also added an old 2b, not shown in pictures)
 * 1 - GeauxRobot Raspberry Pi 3 Model B 4-layer Dog Bone Stack (case)
 * 1 - Anker PowerPort 6 (60W 6-Port USB Charging Hub) (power supply)
 * 1 - Black Box USB-Powered 10/100 5-Port Switch
@@ -20,7 +18,7 @@ This repo is being used to document my project for building a small raspberry pi
 
 # Assembly
 
-1) Assemble the pi's and case. (I only used 3 of the 4 levels since I bought 3 pi's)
+1) Assemble the pi's and case. (shown are 3 pi's, but i ended up added a 4th RPI 2b)
 ![](images/img01.jpg)
 ![](images/img03.jpg)
 
@@ -39,42 +37,132 @@ This repo is being used to document my project for building a small raspberry pi
 6) Attach the USB cable to the network switch power input
 ![](images/img08.jpg)
 
-# Setting up the OS
+# Installing the OS
 I already use arch on my desktop so im using that on the Pi's. The arch documentation for downloading and setting up the ARM OS is straightfoward so I will not repeat it, but the link to the site is [here](https://archlinuxarm.org/platforms/armv8/broadcom/raspberry-pi-3).
 
-After booting up the first pi with a working arch install, the first thing I did was set up an internet connection. On my arch desktop I use Network Manager and the nm-applet. It is very easy to share the internet through this app. Simply create a new connection, on the IPv4 and IPv6 tabs change the method to `Shared to other computers`. Network manager automatically assigns an ip address to the pi. With the pi already plugged in to the switch the eth0 interfaces automatically turns on at boot and there is a working internet connection immediately.
+# Networking the Pi's Together
+After booting up all of the pi's with a new arch install, the first thing I did was set up a server so the pi's could communicate through the network switch. This was fairily challenging for me and I had to do a lot of searching and reading before I got everything to work.
 
-The next thing I did was install some packages
+I designated the pi on the bottom of the stack the head node with hostname rpi0. The other got rpi[1-3]. The steps for setting up the server went like this:
+
+* Assign a static IP to the ethernet device (eth0). In my setup I am using 192.168.1 as the domain so the first server (head node) will get 192.168.1.1
 
 ```sh
-# Assuming you are root
-pacman -S base-devel bash-completion
+# Assigns the static IP
+ip addr add 192.168.1.1/24 broadcast 192.168.1.255 dev eth0
 ```
 
-Uncomment `en_US.UTF-8` in `/etc/locale.gen`, then run
+* Fill out the dhcpd.conf file
+
 ```sh
+# Fill out /etc/dhcpd.conf
+ddns-update-style none;
+authoritative;
+log-facility local7;
+
+# The internal cluster network
+option broadcast-address 192.168.1.255;
+option routers 192.168.1.1;
+default-lease-time 600;
+max-lease-time 7200;
+option domain-name "cluster";
+option domain-name-servers 8.8.8.8, 8.8.4.4;
+subnet 192.168.1.0 netmask 255.255.255.0 {
+   range 192.168.1.14 192.168.1.250;
+
+   host rpi1 {
+      hardware ethernet b8:27:eb:22:60:fb;
+      fixed-address 192.168.1.1;
+   }
+   host rpi2 {
+      hardware ethernet b8:27:eb:a0:a1:7f;
+      fixed-address 192.168.1.2;
+   }
+   host rpi3 {
+      hardware ethernet b8:27:eb:68:b6:a3;
+      fixed-address 192.168.1.3;
+   }
+   host rpi4 {
+      hardware ethernet b8:27:eb:0b:4e:2c;
+      fixed-address 192.168.1.4;
+   }
+}
+
+```
+
+* Start the service to see if it works.
+
+```sh
+systemctl start dhcpd4@eth0.service
+
+```
+
+**NOTE**: This is where I started running into problems. I was able to assign a static ip address to the pi from the command line, but i was not able to get it o work on boot. There were several guides online that showed how to set up a profile using netctl, but it only seemed to work on wireless. When I went to enable dhcpd systemctl would fail because it was trying to start the service before eth0 had an ip assigned. I got around this by putting the shell commands in a bash script and enabling it to run on boot. See below. I started the script with my intials so I could easily find it later.
+
+* Create the file /usr/bin/jeb-start-dhcpd.sh
+
+```sh
+#!/bin/sh
+ip addr add 192.168.1.1/24 broadcast 192.168.1.255 dev eth0
+systemctl start dhcpd4@eth0.service
+```
+
+* Next make it executable
+
+```sh
+chmod 755 /usr/bin/jeb-start-dhcpd.sh
+```
+
+* Create a custom .service file to start the script on boot, i chose /etc/systemd/system/jeb-start-dhcpd.service
+
+```sh
+[Unit]
+Description=Custom DHCPD Start up Script
+
+[Service]
+ExecStart=/usr/bin/jeb-start-dhcpd.sh
+
+[Install]
+WantedBy=multi-user.target
+```
+
+* Enable the service
+
+```sh
+systemctl enable jeb-start-dhcpd.service
+```
+
+* You should also enable the DHCPCD client serivce on each of the other pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items.
+
+```sh
+systemctl enable dhcpcd@eth0.service
+systemctl enable sshd.service
+
+echo rpi[2-4] > /etc/hostname
+
+# Uncomment `en_US.UTF-8` in `/etc/locale.gen`, then run
 locale-gen
 echo LANG=en_US.UTF-8 > /etc/locale.conf
 export LANG=en_US.UTF-8
-```
 
-Set the time zone
-```sh
 ln -s /usr/share/zoneinfo/America/Chicago > /etc/localtime
 ```
 
-Set the host name
-```sh
-echo pi1 > /etc/hostname
+---------------------------------------
+
+## Configuring the OS
+The next thing I did was install some packages
+
+```bash
+# Assuming you are root
+pacman -S base-devel bash-completion git
 ```
 
 
 
+* Set up a new user and change passwords.
 
-
-Set up a new user and change passwords.
-
-```sh
+```bash
 # Assuming you are root, change the root password
 passwd
 
@@ -82,15 +170,22 @@ passwd
 useradd -m -g users -G wheel,storage,power -s /bin/bash someusername
 passwd someusername
 
+EDITOR=nano visudo
+# uncomment
+# %wheel ALL=(ALL) ALL
+
 # Delete the default user alarm
 userdel -r alarm
 
 ```
 
+Now I did the same set up for the other 2 pi's, with the exception of changing the host name for pi2 and pi3.
 
+# Configuring the Network
 
+# Setting up Spark
 
-# Set up Environmental variables
+Set up Environmental variables
 
 ```sh
 export JAVA_HOME=/usr/lib/jvm/java-8-openjdk
