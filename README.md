@@ -1,10 +1,3 @@
-- [PySpark Raspberry Pi Cluster Project](#pyspark-raspberry-pi-cluster-project)
-- [Shopping List](#shopping-list)
-- [Assembly](#assembly)
-- [Setting up the OS](#setting-up-the-os)
-- [Configuring the Network](#configuring-the-network)
-- [Setting up Spark](#setting-up-spark)
-
 # PySpark Raspberry Pi Cluster Project
 
 This repo is being used to document my project for building a small raspberry pi cluster running spark. Similar to [this article](http://makezine.com/projects/build-a-compact-4-node-raspberry-pi-cluster/) which I used as a guide, I only wanted to have to use a single wall plug for the entire setup. I also wanted to minimize the footprint of the cluster. In this example all of the devices except for the USB hub are powered by USB.
@@ -43,9 +36,9 @@ I already use arch on my desktop so im using that on the Pi's. The arch document
 # Networking the Pi's Together
 After booting up all of the pi's with a new arch install, the first thing I did was set up a server so the pi's could communicate through the network switch. This was fairily challenging for me and I had to do a lot of searching and reading before I got everything to work.
 
-I designated the pi on the bottom of the stack the head node with hostname rpi0. The other got rpi[1-3]. The steps for setting up the server went like this:
+I designated the pi on the bottom of the stack the head node with hostname rpi1. The others got rpi[2-4]. The steps for setting up the server went like this:
 
-* Assign a static IP to the ethernet device (eth0). In my setup I am using 192.168.1 as the domain so the first server (head node) will get 192.168.1.1
+* Assign a static IP to the ethernet device (eth0). In my setup I am using 192.168.1.0 as the domain so the first server (head node) will get 192.168.1.1
 
 ```sh
 # Assigns the static IP
@@ -97,7 +90,7 @@ systemctl start dhcpd4@eth0.service
 
 ```
 
-**NOTE**: This is where I started running into problems. I was able to assign a static ip address to the pi from the command line, but i was not able to get it o work on boot. There were several guides online that showed how to set up a profile using netctl, but it only seemed to work on wireless. When I went to enable dhcpd systemctl would fail because it was trying to start the service before eth0 had an ip assigned. I got around this by putting the shell commands in a bash script and enabling it to run on boot. See below. I started the script with my intials so I could easily find it later.
+**NOTE**: This is where I started running into problems. I was able to assign a static ip address to the pi from the command line, but i was not able to get it to work on boot. There were several guides online that showed how to set up a profile using netctl, but it only seemed to work on wireless. When I went to enable dhcpd systemctl would fail because it was trying to start the service before eth0 had an ip assigned. I got around this by putting the shell commands in a bash script and enabling it to run on boot. See below. I started the script with my intials so I could easily find it later.
 
 * Create the file /usr/bin/jeb-start-dhcpd.sh
 
@@ -113,7 +106,7 @@ systemctl start dhcpd4@eth0.service
 chmod 755 /usr/bin/jeb-start-dhcpd.sh
 ```
 
-* Create a custom .service file to start the script on boot, i chose /etc/systemd/system/jeb-start-dhcpd.service
+* Create a custom .service file to start the script on boot. `/etc/systemd/system/jeb-start-dhcpd.service`
 
 ```sh
 [Unit]
@@ -148,17 +141,37 @@ export LANG=en_US.UTF-8
 ln -s /usr/share/zoneinfo/America/Chicago > /etc/localtime
 ```
 
----------------------------------------
+* Append these IPs to the /etc/hosts file
 
-## Configuring the OS
-The next thing I did was install some packages
-
-```bash
-# Assuming you are root
-pacman -S base-devel bash-completion git
+```sh
+192.168.1.1     rpi1      rpi1
+192.168.1.2     rpi2      rpi2
+192.168.1.3     rpi3      rpi3
+192.168.1.4     rpi4      rpi4
 ```
 
+# Configuring the OS
 
+After setting up the language, keyboard, local time, and hostname I needed to install some packages. Only rpi1 has access to the internet so Im going to install the packages there and then copy the packages over to each of the other pi's and install them locally.
+
+```sh
+pacman -S base-devel bash-completion git rsync
+pacman -Sp nvidia nvidia-utils xf86-video-nouveau > /path/to/nvidia.list
+
+```
+
+Then copy the files to each pi
+
+```sh
+scp  /var/cache/pacman/pkg/* alarm@rpi2:~/
+pacman -U ~/*.tar.gz
+```
+
+* Set up ssh authentication so that no password is required
+
+```sh
+ssh-keygen
+```
 
 * Set up a new user and change passwords.
 
@@ -179,9 +192,7 @@ userdel -r alarm
 
 ```
 
-Now I did the same set up for the other 2 pi's, with the exception of changing the host name for pi2 and pi3.
 
-# Configuring the Network
 
 # Setting up Spark
 
