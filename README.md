@@ -125,7 +125,7 @@ WantedBy=multi-user.target
 systemctl enable jeb-start-dhcpd.service
 ```
 
-* You should also enable the DHCPCD client serivce on each of the other pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items.
+* You should also enable the DHCPCD client serivce on each of the other pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items. Also go ahead and create the user and change the default password.
 
 ```sh
 systemctl enable dhcpcd@eth0.service
@@ -141,6 +141,13 @@ export LANG=en_US.UTF-8
 ln -s /usr/share/zoneinfo/America/Chicago > /etc/localtime
 ```
 
+
+
+
+
+
+
+
 * Append these IPs to the /etc/hosts file
 
 ```sh
@@ -152,31 +159,13 @@ ln -s /usr/share/zoneinfo/America/Chicago > /etc/localtime
 
 # Configuring the OS
 
-After setting up the language, keyboard, local time, and hostname I needed to install some packages. Only rpi1 has access to the internet so Im going to install the packages there and then copy the packages over to each of the other pi's and install them locally.
+Now install some packages. Only rpi1 has access to the internet so Im going to install the packages there and then copy the packages over to each of the other pi's and install them locally. First, I want to set up my user and change the default passwords.
 
 ```sh
-pacman -S base-devel bash-completion git rsync
-pacman -Sp nvidia nvidia-utils xf86-video-nouveau > /path/to/nvidia.list
+# get wget first
+pacman -S wget sudo
 
-```
-
-Then copy the files to each pi
-
-```sh
-scp  /var/cache/pacman/pkg/* alarm@rpi2:~/
-pacman -U ~/*.tar.gz
-```
-
-* Set up ssh authentication so that no password is required
-
-```sh
-ssh-keygen
-```
-
-* Set up a new user and change passwords.
-
-```bash
-# Assuming you are root, change the root password
+# Change the root password
 passwd
 
 # Add a new user and change password
@@ -187,10 +176,77 @@ EDITOR=nano visudo
 # uncomment
 # %wheel ALL=(ALL) ALL
 
+# Log out and log back in as the new username
 # Delete the default user alarm
 userdel -r alarm
 
+# From rpi1, create a list of packages to download and create a local repo
+mkdir cluster-repo
+sudo pacman -Sp base-devel bash-completion git rsync > ~/repo.list
+wget -P ~/cluster-repo/ -i repo.list
+cd cluster-repo
+repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
+
+# Temporarily copy the repos to each pi, once credentials are set up we should link each pi to the rpi1 repository
+# make sure the cluster-repo folder exists on each pi
+scp ~/cluster-repo/* alarm@rpi2:~/cluster-repo
+scp ~/cluster-repo/* alarm@rpi3:~/cluster-repo
+scp ~/cluster-repo/* alarm@rpi4:~/cluster-repo
 ```
+
+* Next you should log in to each pi, add the local rpi1 repo and install sudo so you can create the same user on all of the pis as well.
+
+```sh
+# Using RPI2 as an example
+# Add a repo pointing to rpi:~/cluster-repo
+nano /etc/pacman.conf
+
+# Append this to the conf file
+SigLevel = Never
+[cluster.repo]
+Server = file:///home/alarm/cluster-repo/
+
+# update pacman
+pacman -Sy
+
+# install sudo
+pacman -S sudo
+```
+
+
+* Now you should be able to set up a new user with sudo rights and change password on each of the other pis.
+
+```bash
+# Change the root password
+passwd
+
+# Add a new user and change password
+useradd -m -g users -G wheel,storage,power -s /bin/bash someusername
+passwd someusername
+
+EDITOR=nano visudo
+# uncomment
+# %wheel ALL=(ALL) ALL
+
+# Delete the default user alarm, you will have to log out and log back in as your new user
+userdel -r alarm
+
+# Set up the ssh key for communicating between the pis
+ssh-keygen
+
+# copy id_rsa.pub and copy it to rpi1: .ssh/authorized_keys
+# do this for all of the pis, then copy the authorized_keys file from
+# rpi1 to all of the other pis
+scp ~/.ssh/authorized_keys rpi2:~/.ssh
+scp ~/.ssh/authorized_keys rpi3:~/.ssh
+scp ~/.ssh/authorized_keys rpi4:~/.ssh
+```
+
+
+
+
+
+
 
 
 
