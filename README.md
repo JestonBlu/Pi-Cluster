@@ -142,12 +142,6 @@ ln -s /usr/share/zoneinfo/America/Chicago > /etc/localtime
 ```
 
 
-
-
-
-
-
-
 * Append these IPs to the /etc/hosts file
 
 ```sh
@@ -181,18 +175,19 @@ EDITOR=nano visudo
 userdel -r alarm
 
 # From rpi1, create a list of packages to download and create a local repo
-mkdir cluster-repo
-sudo pacman -Sp base-devel bash-completion git rsync > ~/repo.list
-wget -P ~/cluster-repo/ -i repo.list
-cd cluster-repo
+mkdir cluster.repo
+sudo pacman -Sp base-devel bash-completion git rsync nfs-utils > ~/repo.list
+wget -P ~/cluster.repo/ -i repo.list
+cd cluster.repo
 repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
 
 # Temporarily copy the repos to each pi, once credentials are set up we should link each pi to the rpi1 repository
 # make sure the cluster-repo folder exists on each pi
-scp ~/cluster-repo/* alarm@rpi2:~/cluster-repo
-scp ~/cluster-repo/* alarm@rpi3:~/cluster-repo
-scp ~/cluster-repo/* alarm@rpi4:~/cluster-repo
+scp ~/cluster.repo/* alarm@rpi2:~/cluster.repo
+scp ~/cluster.repo/* alarm@rpi3:~/cluster.repo
+scp ~/cluster.repo/* alarm@rpi4:~/cluster.repo
 ```
+
 
 * Next you should log in to each pi, add the local rpi1 repo and install sudo so you can create the same user on all of the pis as well.
 
@@ -204,7 +199,7 @@ nano /etc/pacman.conf
 # Append this to the conf file
 SigLevel = Never
 [cluster.repo]
-Server = file:///home/alarm/cluster-repo/
+Server = file:///home/alarm/cluster.repo/
 
 # update pacman
 pacman -Sy
@@ -217,6 +212,7 @@ pacman -S sudo
 * Now you should be able to set up a new user with sudo rights and change password on each of the other pis.
 
 ```bash
+# Using RPI2 as an example
 # Change the root password
 passwd
 
@@ -228,26 +224,42 @@ EDITOR=nano visudo
 # uncomment
 # %wheel ALL=(ALL) ALL
 
-# Delete the default user alarm, you will have to log out and log back in as your new user
+# Delete the default user alarm on all of the pis
 userdel -r alarm
 
 # Set up the ssh key for communicating between the pis
 ssh-keygen
 
-# copy id_rsa.pub and copy it to rpi1: .ssh/authorized_keys
-# do this for all of the pis, then copy the authorized_keys file from
-# rpi1 to all of the other pis
+# copy id_rsa.pub to rpi1: .ssh/authorized_keys
+scp .ssh/id_rsa.pub rpi1:~/.ssh/id_rsa_rpi2.pub
+
+# Append the key to the authorized_keys file
+cat .ssh/id_rsa_rpi2.pub >> .ssh/authorized_keys
+
+# Copy the authorized_keys file back to rpi2
 scp ~/.ssh/authorized_keys rpi2:~/.ssh
-scp ~/.ssh/authorized_keys rpi3:~/.ssh
-scp ~/.ssh/authorized_keys rpi4:~/.ssh
 ```
 
 
+* Lastly I want to create a repository on RPI1 that the other pis can link to so I dont have to copy all of the packges to each machine. In order to do this I am going to create a NFS share on RPI.
 
+```sh
+mkdir cluster.repo
+sudo pacman -Sp base-devel bash-completion git rsync nfs-utils > ~/repo.list
+wget -c -P ~/cluster.repo/ -i repo.list
+cd cluster.repo
+repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
 
+# Now update the pacman conf to point to the new repo
+scp -r ~/cluster.repo/* rpi2:~/cluster.repo
 
+# Now edit /etc/pacman.conf
+SigLevel = Never
+[cluster.repo]
+Server = file:///home/jeston/cluster.repo/
 
-
+sudo pacman -S base-devel bash-completion git rsync nfs-utils
+```
 
 
 # Setting up Spark
