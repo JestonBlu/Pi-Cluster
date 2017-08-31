@@ -125,7 +125,7 @@ WantedBy=multi-user.target
 systemctl enable jeb-start-dhcpd.service
 ```
 
-* You should also enable the DHCPCD client serivce on each of the other pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items. Also go ahead and create the user and change the default password.
+* You should also enable the DHCPCD client serivce on each of the other pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items.
 
 ```sh
 systemctl enable dhcpcd@eth0.service
@@ -252,19 +252,39 @@ sudo systemctl enable nfs-server.service
 
 # Net log into each Pi and edit the /etc/fstab to add
 ## NFS
-rpi1:/var/cache/pacman/pkg/ /home/jeston/cluster.repo nfs auto 0 0
+rpi1:/var/cache/pacman/pkg/ /home/someusername/cluster.repo nfs auto 0 0
 
 # Now we have created a mount point that pacman is already using as a repository
-# Delete the packages that are currently in cluster.repo and then start and enable the nfs client on each of the pis
+# Delete the packages that are currently in cluster.repo and then start and enable
+# the nfs client on each of the pis
 sudo systemctl enable nfs-client.target
 rm cluster.repo/*
 
-# Now reboot each machine
+# Now reboot each machine and everything should be good to go!
 ```
 
-That concludes the setup of the operating system.
+The only downside now is that you have to rebuild the package db anytime you want to install new packages, i created a little script for convenience.
+
+
+```sh
+#!/bin/sh
+repo-add /var/cache/pacman/pkg/cluster.repo.db.tar.gz /var/cache/pacman/pkg/*.pkg.tar.xz
+
+# Make is executable
+sudo chmod 755 /usr/bin/jeb-build-repo.sh
+```
+
 
 # Setting up Spark
+
+Download and install the required software on each pi
+
+```sh
+# Install Java
+sudo pacman -S jre8-openjdk-headless
+
+```
+
 
 Set up Environmental variables
 
