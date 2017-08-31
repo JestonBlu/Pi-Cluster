@@ -202,10 +202,10 @@ SigLevel = Never
 Server = file:///home/alarm/cluster.repo/
 
 # update pacman
-pacman -Sy
+pacman -Syyu
 
-# install sudo
-pacman -S sudo
+# install sudo and others
+pacman -S sudo nfs-utils bash-completion base-devel git rsync
 ```
 
 
@@ -241,26 +241,28 @@ scp ~/.ssh/authorized_keys rpi2:~/.ssh
 ```
 
 
-* Lastly I want to create a repository on RPI1 that the other pis can link to so I dont have to copy all of the packges to each machine. In order to do this I am going to create a NFS share on RPI.
+* Lastly I want to create a repository on RPI1 that the other pis can link to so I dont have to copy all of the packges to each machine. In order to do this I am going to create a NFS share on RPI and I am going to point it to the pacman cache on rpi1 that way when i install a package on rpi1, the other pis can access the packages without me having to copy it.
 
 ```sh
-mkdir cluster.repo
-sudo pacman -Sp base-devel bash-completion git rsync nfs-utils > ~/repo.list
-wget -c -P ~/cluster.repo/ -i repo.list
-cd cluster.repo
-repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
+# Edit /etc/exports and Append
+/var/cache/pacman/pkg/
 
-# Now update the pacman conf to point to the new repo
-scp -r ~/cluster.repo/* rpi2:~/cluster.repo
+# Start the server
+sudo systemctl enable nfs-server.service
 
-# Now edit /etc/pacman.conf
-SigLevel = Never
-[cluster.repo]
-Server = file:///home/jeston/cluster.repo/
+# Net log into each Pi and edit the /etc/fstab to add
+## NFS
+rpi1:/var/cache/pacman/pkg/ /home/jeston/cluster.repo nfs auto 0 0
 
-sudo pacman -S base-devel bash-completion git rsync nfs-utils
+# Now we have created a mount point that pacman is already using as a repository
+# Delete the packages that are currently in cluster.repo and then start and enable the nfs client on each of the pis
+sudo systemctl enable nfs-client.target
+rm cluster.repo/*
+
+# Now reboot each machine
 ```
 
+That concludes the setup of the operating system.
 
 # Setting up Spark
 
