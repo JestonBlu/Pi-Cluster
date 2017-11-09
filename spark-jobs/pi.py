@@ -1,9 +1,8 @@
 '''
 This script is from the spark examples folder, slightly modified. I modified
 this script in order to be able to run it interactively in Atom with Hydrogen.
-In order for spark to work within Atom I needed to bind the address and set
-master. I think hardcoded the partitions so that it could be run interactively
-or by using spark-submit
+In order for spark to work within Atom I needed to bind the address. I hardcoded
+the partitions so that it could be run interactively or by using spark-submit.
 '''
 
 from __future__ import print_function
@@ -21,7 +20,6 @@ if __name__ == "__main__":
     """
     spark = SparkSession\
         .builder\
-        .master("local[6]") \
         .config("spark.driver.bindAddress", "127.0.0.1") \
         .appName("PythonPi")\
         .getOrCreate()
