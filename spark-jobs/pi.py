@@ -12,27 +12,24 @@ from operator import add
 
 from pyspark.sql import SparkSession
 
-partitions = 1000
+partitions = 100
 
-if __name__ == "__main__":
-    """
-        Usage: pi [partitions]
-    """
-    spark = SparkSession\
-        .builder\
-        .config("spark.driver.bindAddress", "127.0.0.1") \
-        .appName("PythonPi")\
-        .getOrCreate()
+spark = SparkSession\
+    .builder\
+    .config("spark.driver.bindAddress", "127.0.0.1") \
+    .appName("PythonPi")\
+    .getOrCreate()
 
-    n = 100000 * partitions
+n = 100000 * partitions
 
-    def f(_):
-        x = random() * 2 - 1
-        y = random() * 2 - 1
-        return 1 if x ** 2 + y ** 2 <= 1 else 0
 
-    count = spark.sparkContext.parallelize(
-        range(1, n + 1), partitions).map(f).reduce(add)
-    print("Pi is roughly %f" % (4.0 * count / n))
+def f(_):
+    x = random() * 2 - 1
+    y = random() * 2 - 1
+    return 1 if x ** 2 + y ** 2 <= 1 else 0
 
-    spark.stop()
+
+count = spark.sparkContext.parallelize(
+    range(1, n + 1), partitions).map(f).reduce(add)
+
+print("Pi is roughly %f" % (4.0 * count / n))
