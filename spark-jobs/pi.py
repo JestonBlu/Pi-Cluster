@@ -15,9 +15,9 @@ from pyspark.sql import SparkSession
 partitions = 100
 
 spark = SparkSession\
-    .builder\
-    .config("spark.driver.bindAddress", "127.0.0.1") \
-    .appName("PythonPi")\
+    .builder
+    .config("spark.driver.bindAddress", "127.0.0.1")
+    .appName("PythonPi")
     .getOrCreate()
 
 n = 100000 * partitions
@@ -28,7 +28,7 @@ def f(_):
     y = random() * 2 - 1
     return 1 if x ** 2 + y ** 2 <= 1 else 0
 
-
+0
 count = spark.sparkContext.parallelize(
     range(1, n + 1), partitions).map(f).reduce(add)
 
