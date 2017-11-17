@@ -186,7 +186,6 @@ pacman -Syyu
 pacman -S sudo nfs-utils bash-completion base-devel git rsync yajl
 ```
 
-
 * Now you should be able to set up a new user with sudo rights and change password on each of the other pis.
 
 ```bash
@@ -218,19 +217,30 @@ cat .ssh/id_rsa_rpi2.pub >> .ssh/authorized_keys
 scp ~/.ssh/authorized_keys rpi2:~/.ssh
 ```
 
-
-* Lastly I want to create a repository on RPI1 that the other pis can link to so I dont have to copy all of the packges to each machine. In order to do this I am going to create a NFS share on RPI and I am going to point it to the pacman cache on rpi1 that way when i install a package on rpi1, the other pis can access the packages without me having to copy it.
+* Lastly I want to create a repository on RPI1 that the other pis can link to so I dont have to copy all of the packges to each machine. In order to do this I am going to create a NFS share on RPI and I am going to point it to the pacman cache on rpi1 that way when i install a package on rpi1, the other pis can access the packages without me having to copy it. Im also going to create a separate nfs folder that can be used to exchange data between the Pi's.
 
 ```sh
+# On RPI1
+mkdir -p /srv/nfs /home/[username]/nfs
+mount --bind /home/[username]/nfs /srv/nfs
+
+# /etc/fstab
+# NFS on RPI1
+/home/[username]/nfs /srv/nfs none bind 0 0
+
 # Edit /etc/exports and Append
-/var/cache/pacman/pkg/
+/var/cache/pacman/pkg        *(rw,sync)
+/srv/nfs                     *(rw,sync)
 
 # Start the server
 sudo systemctl enable nfs-server.service
+```
 
-# Net log into each Pi and edit the /etc/fstab to add
-## NFS
-rpi1:/var/cache/pacman/pkg/ /home/someusername/cluster.repo nfs auto 0 0
+```sh
+# Net log into each Pi and edit
+# /etc/fstab
+rpi1:/var/cache/pacman/pkg/ /home/[username]/cluster.repo nfs auto 0 0
+rpi1:/srv/nfs/              /home/[username]/nfs          nfs auto 0 0
 
 # Now we have created a mount point that pacman is already using as a repository
 # Delete the packages that are currently in cluster.repo and then start and enable
@@ -241,12 +251,11 @@ rm cluster.repo/*
 # Now reboot each machine and everything should be good to go!
 ```
 
-The only downside now is that you have to rebuild the package db anytime you want to install new packages, i created a little script for convenience.
-
+The only downside now is that you have to rebuild the package db anytime you want to install new packages, I created a little script for convenience.
 
 ```sh
 #!/bin/sh
-repo-add /var/cache/pacman/pkg/cluster.repo.db.tar.gz /var/cache/pacman/pkg/*.pkg.tar.xz
+repo-add -n /var/cache/pacman/pkg/cluster.repo.db.tar.gz /var/cache/pacman/pkg/*.pkg.tar.xz
 
 # Make is executable
 sudo chmod 755 /usr/bin/jeb-build-repo.sh
