@@ -1,0 +1,2 @@
+0 * * * * /home/jeston/apps/miniconda3/bin/python /home/jeston/projects/pi-cluster/spark-jobs/rpi_stats.py
+

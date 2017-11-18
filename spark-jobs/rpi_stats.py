@@ -12,10 +12,10 @@ time = dt.datetime.now()
 time = pd.to_datetime(time)
 
 # Get Temperature of CPU in Celcius
-rpi1 = int(subprocess.check_output(['ssh -tq archdesk cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
-rpi2 = int(subprocess.check_output(['ssh -tq archdesk cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
-rpi3 = int(subprocess.check_output(['ssh -tq archdesk cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
-rpi4 = int(subprocess.check_output(['ssh -tq archdesk cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
+rpi1 = int(subprocess.check_output(['ssh -tq rpi1 cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
+rpi2 = int(subprocess.check_output(['ssh -tq rpi2 cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
+rpi3 = int(subprocess.check_output(['ssh -tq rpi3 cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
+rpi4 = int(subprocess.check_output(['ssh -tq rpi4 cat /sys/class/thermal/thermal_zone0/temp'], shell=True))
 
 # Combine the temps
 cpu = {
@@ -29,7 +29,7 @@ cpu = {
 cpu = pd.DataFrame(cpu)
 
 # Check to see if the current data file is empty
-size = os.stat('~/nfs/rpi_stats.csv').st_size
+size = os.stat('/home/jeston/nfs/rpi_stats.csv').st_size
 
 # Create an empty df if the file is empty
 new = {
@@ -43,8 +43,8 @@ new = {
 if size == 0:
     cpu_in = pd.DataFrame(new)
 else:
-    cpu_in = pd.read_csv("data/rpi_stats.csv")
+    cpu_in = pd.read_csv("/home/jeston/nfs/rpi_stats.csv")
 
 # Append to file
 cpu_out = cpu_in.append(cpu)
-cpu_out.to_csv("~/nfs/rpi_stats.csv", index=False)
+cpu_out.to_csv("/home/jeston/nfs/rpi_stats.csv", index=False)
