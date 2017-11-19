@@ -1,2 +1,2 @@
 */5 * * * * /home/jeston/apps/miniconda3/bin/python /home/jeston/projects/pi-cluster/spark-jobs/rpi_stats.py
-
+0   * * * * cp /home/jeston/nfs/rpi_stats.csv /home/jeston/projects/pi-cluster/data/
