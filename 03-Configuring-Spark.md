@@ -27,8 +27,8 @@ I installed both programs into ~/apps. Since rpi1 is the only pi with internet I
 
 ```sh
 #! /usr/sh
-rsync -razP --progress ~/apps/ rpi1:~/apps &
 rsync -razP --progress ~/apps/ rpi2:~/apps &
+rsync -razP --progress ~/apps/ rpi3:~/apps &
 rsync -razP --progress ~/apps/ rpi4:~/apps
 
 ```
