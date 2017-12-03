@@ -1,3 +1,4 @@
+#!/bin/bash
 cd ~/projects/pi-cluster
 git pull
 git add .

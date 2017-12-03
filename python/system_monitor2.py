@@ -9,7 +9,7 @@ from pyspark.sql.functions import *
 
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 spark = SparkSession \
     .builder \
@@ -53,4 +53,4 @@ dta_hourly = dta.resample("60T").mean()
 
 # Generic plot
 plot_hourly = dta_hourly.plot().get_figure()
-plot_hourly.savefig("/home/jeston/Projects/pi-cluster/output/cpu.png")
+plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
