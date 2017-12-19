@@ -16,7 +16,6 @@ partitions = 100
 
 spark = SparkSession \
     .builder \
-    .config("spark.driver.bindAddress", "127.0.0.1") \
     .appName("PythonPi") \
     .getOrCreate()
 
