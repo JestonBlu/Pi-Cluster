@@ -9,7 +9,7 @@ from pyspark.sql.functions import *
 
 import pandas as pd
 import datetime
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 spark = SparkSession \
     .builder \
