@@ -23,8 +23,10 @@ userSchema = StructType() \
     .add("rpi3", "double") \
     .add("rpi4", "double")
 
-# temp read for development
-dta = spark.read.csv("data/rpi_stats.csv", schema = userSchema)
+# Read file from share drive
+dta = spark.read.csv("/home/jeston/nfs/rpi_stats.csv", schema = userSchema)
+# desktop development
+# dta = spark.read.csv("data/rpi_stats.csv", schema = userSchema)
 
 # Pull the date from 5 days before today
 now = datetime.datetime.now()
@@ -37,6 +39,7 @@ dtaSub = dta.filter(dta.date > dt)
 # Aggregate the data over 3 hours
 dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
 dtaSub_spark.registerTempTable("subTab")
+
 
 # Show the last 6 hours of aggregated observations
 dtaSub_spark.printSchema()
