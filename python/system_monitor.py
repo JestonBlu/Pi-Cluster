@@ -1,4 +1,5 @@
 '''
+PySpark job to plot CPU temperature
 '''
 
 from pyspark.sql import SparkSession
@@ -12,7 +13,6 @@ import matplotlib.pyplot as plt
 
 spark = SparkSession \
     .builder \
-    .config("spark.driver.bindAddress", "127.0.0.1") \
     .appName("PythonPi") \
     .getOrCreate()
 
@@ -23,28 +23,41 @@ userSchema = StructType() \
     .add("rpi3", "double") \
     .add("rpi4", "double")
 
-dta = spark \
-    .readStream \
-    .option("sep", ",") \
-    .schema(userSchema) \
-    .csv("data/rpi_stats.csv")
-
-# temp read for development
-# dta = spark.read.csv("data/rpi_stats.csv", schema = userSchema)
+# Read file from share drive
+dta = spark.read.csv("/home/jeston/nfs/rpi_stats.csv", schema = userSchema)
+# desktop development
+#dta = spark.read.csv("data/rpi_stats.csv", schema = userSchema)
 
 # Pull the date from 5 days before today
 now = datetime.datetime.now()
-dt = now + pd.DateOffset(-5)
+dt = now + pd.DateOffset(-3)
 dt = dt.strftime("%Y-%m-%d")
 
 # Pull the last 5 days
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-w = dtaSub.groupBy(window("date", windowDuration="3 hour")).avg()
+dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
+dtaSub_spark.registerTempTable("subTab")
 
-w.writeStream \
-    .queryName("aggregates") \
-    .format("csv") \
-    .option("path", "data") \
-    .start()
+# Show the last 6 hours of aggregated observations
+# dtaSub_spark.printSchema()
+# spark.sql('SELECT * from subTab order by window desc limit 6').show()
+
+# Convert to a pandas dataframe
+dta = dtaSub.toPandas()
+dta.index = dta['date']
+
+# Calculate hourly mean
+dta_hourly = dta.resample("60T").mean()
+
+# Write to csv
+dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
+
+# Read in csv
+dta_hourly = pd.read_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
+dta_hourly.index = dta_hourly['date']
+
+# Generic plot
+plot_hourly = dta_hourly.plot().get_figure()
+plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
