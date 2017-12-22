@@ -46,6 +46,8 @@ dtaSub_spark.printSchema()
 
 dtaSub = dtaSub.coalesce(1)
 
+dtaSub.show()
+
 # Convert to a pandas dataframe
 # dta = dtaSub.toPandas()
 # dta.index = dta['date']
