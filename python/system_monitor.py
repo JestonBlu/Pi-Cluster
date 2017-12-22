@@ -41,11 +41,10 @@ dtaSub = dta.filter(dta.date > dt)
 dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
 dtaSub_spark.printSchema()
 
-#dtaSub.createOrReplaceTempView("dtaSubTab")
-#spark.sql('SELECT * FROM dtaSubTab').show()
+dtaSub.createOrReplaceTempView("dtaSubTab")
+spark.sql('SELECT * FROM dtaSubTab').show()
 
 dtaSub = dtaSub.coalesce(1)
-
 dtaSub.show()
 
 # Convert to a pandas dataframe
