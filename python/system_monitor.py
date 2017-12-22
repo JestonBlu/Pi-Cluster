@@ -11,6 +11,7 @@ import pandas as pd
 import datetime
 import matplotlib.pyplot as plt
 
+#.config("spark.driver.bindAddress", "127.0.0.1") \
 spark = SparkSession \
     .builder \
     .appName("System Monitor") \
@@ -37,15 +38,10 @@ dt = dt.strftime("%Y-%m-%d")
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg().collect()
-#dtaSub_spark.registerTempTable("subTab")
-
-# Show the last 6 hours of aggregated observations
-# dtaSub_spark.printSchema()
-# spark.sql('SELECT * from subTab order by window desc limit 6').show()
-
+dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
+dtaSub_spark.printSchema()
 # Convert to a pandas dataframe
-dta = dtaSub.collect().toPandas()
+dta = dtaSub.toPandas()
 dta.index = dta['date']
 
 # Calculate hourly mean
