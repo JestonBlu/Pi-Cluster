@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 spark = SparkSession \
     .builder \
-    .appName("PythonPi") \
+    .appName("System Monitor") \
     .getOrCreate()
 
 userSchema = StructType() \
@@ -56,7 +56,7 @@ dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
 
 # Read in csv
 dta_hourly = pd.read_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
-dta_hourly.index = dta_hourly['date']
+#dta_hourly.index = dta_hourly['date']
 
 # Generic plot
 plot_hourly = dta_hourly.plot().get_figure()
