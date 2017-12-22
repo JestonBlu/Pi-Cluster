@@ -38,15 +38,9 @@ dt = dt.strftime("%Y-%m-%d")
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
-dtaSub_spark.printSchema()
-dtaSub_spark.show()
-
-#dtaSub.createOrReplaceTempView("dtaSubTab")
-#spark.sql('SELECT * FROM dtaSubTab').show()
-
-#dtaSub = dtaSub.coalesce(1)
-#dtaSub.show()
+#dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
+#dtaSub_spark.printSchema()
+#dtaSub_spark.show()
 
 # Convert to a pandas dataframe
 dta = dtaSub.toPandas()
@@ -64,5 +58,5 @@ dta_hourly.head()
 # #dta_hourly.index = dta_hourly['date']
 #
 # # Generic plot
-# plot_hourly = dta_hourly.plot().get_figure()
-# plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
+plot_hourly = dta_hourly.plot().get_figure()
+plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
