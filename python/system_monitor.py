@@ -40,12 +40,13 @@ dtaSub = dta.filter(dta.date > dt)
 # Aggregate the data over 3 hours
 dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
 dtaSub_spark.printSchema()
+dtaSub_spark.show()
 
 #dtaSub.createOrReplaceTempView("dtaSubTab")
 #spark.sql('SELECT * FROM dtaSubTab').show()
 
-dtaSub = dtaSub.coalesce(1)
-dtaSub.show()
+#dtaSub = dtaSub.coalesce(1)
+#dtaSub.show()
 
 # Convert to a pandas dataframe
 dta = dtaSub.toPandas()
