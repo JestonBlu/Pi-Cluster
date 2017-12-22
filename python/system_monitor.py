@@ -37,19 +37,19 @@ dt = dt.strftime("%Y-%m-%d")
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
-dtaSub_spark.registerTempTable("subTab")
+dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg().collect()
+#dtaSub_spark.registerTempTable("subTab")
 
 # Show the last 6 hours of aggregated observations
 # dtaSub_spark.printSchema()
 # spark.sql('SELECT * from subTab order by window desc limit 6').show()
 
 # Convert to a pandas dataframe
-dta = dtaSub.toPandas()
+dta = dtaSub.collect().toPandas()
 dta.index = dta['date']
 
 # Calculate hourly mean
-dta_hourly = dta.resample("60T").mean().collect()
+dta_hourly = dta.resample("60T").mean()
 
 # Write to csv
 dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
