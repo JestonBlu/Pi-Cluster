@@ -38,8 +38,8 @@ dt = dt.strftime("%Y-%m-%d")
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-#dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
-#dtaSub_spark.printSchema()
+dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
+dtaSub_spark.printSchema()
 
 #dtaSub.createOrReplaceTempView("dtaSubTab")
 #spark.sql('SELECT * FROM dtaSubTab').show()
