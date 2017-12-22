@@ -49,7 +49,7 @@ dta = dtaSub.toPandas()
 dta.index = dta['date']
 
 # Calculate hourly mean
-dta_hourly = dta.resample("60T").mean()
+dta_hourly = dta.resample("60T").mean().collect()
 
 # Write to csv
 dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
