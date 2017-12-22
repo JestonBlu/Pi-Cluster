@@ -41,20 +41,21 @@ dtaSub = dta.filter(dta.date > dt)
 dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
 dtaSub_spark.printSchema()
 
-dtaSub.createOrReplaceTempView("dtaSubTab")
-spark.sql('SELECT * FROM dtaSubTab').show()
+#dtaSub.createOrReplaceTempView("dtaSubTab")
+#spark.sql('SELECT * FROM dtaSubTab').show()
 
 dtaSub = dtaSub.coalesce(1)
 dtaSub.show()
 
 # Convert to a pandas dataframe
-# dta = dtaSub.toPandas()
-# dta.index = dta['date']
-#
-# # Calculate hourly mean
-# dta_hourly = dta.resample("60T").mean()
-#
-# # Write to csv
+dta = dtaSub.toPandas()
+dta.index = dta['date']
+
+# Calculate hourly mean
+dta_hourly = dta.resample("60T").mean()
+dta_hourly.head()
+
+# Write to csv
 # dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
 #
 # # Read in csv
