@@ -38,30 +38,20 @@ dt = dt.strftime("%Y-%m-%d")
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-#dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="6 hour")).avg()
-#dtaSub_spark.printSchema()
-#dtaSub_spark.show()
+dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="1 hour")).avg()
+dtaSub_spark.printSchema()
+dtaSub_spark.show()
 
 # Convert to a pandas dataframe
-dta = dtaSub.collect()
+dta = dtaSub_spark.collect()
 dta = pd.DataFrame(dta, columns=['date','rpi1','rpi2','rpi3','rpi4'])
+
 dta.index = dta['date']
+dta = dta.drop(columns = ['date'])
 
-#dta = dtaSub.coalesce(1).toPandas()
-#dta.head()
-#dta.index = dta['date']
-
-# Calculate hourly mean
-dta_hourly = dta.resample("60T").mean()
-dta_hourly.head()
-
-# Write to csv
-# dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
-#
-# # Read in csv
-# dta_hourly = pd.read_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
-# #dta_hourly.index = dta_hourly['date']
-#
 # # Generic plot
-plot_hourly = dta_hourly.plot().get_figure()
+plot_hourly = dta.plot().get_figure()
 plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
+
+#Write to csv
+dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
