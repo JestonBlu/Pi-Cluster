@@ -43,9 +43,13 @@ dtaSub = dta.filter(dta.date > dt)
 #dtaSub_spark.show()
 
 # Convert to a pandas dataframe
-dta = dtaSub.coalesce(1).toPandas()
-dta.head()
+dta = dtaSub.collect()
+dta = pd.DataFrame(dta, columns=['date','rpi1','rpi2','rpi3','rpi4'])
 dta.index = dta['date']
+
+#dta = dtaSub.coalesce(1).toPandas()
+#dta.head()
+#dta.index = dta['date']
 
 # Calculate hourly mean
 dta_hourly = dta.resample("60T").mean()
