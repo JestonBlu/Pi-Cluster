@@ -39,20 +39,13 @@ dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
 dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="1 hour")).avg()
-#dtaSub_spark.printSchema()
-#dtaSub_spark.show()
 
 # Convert to a pandas dataframe
 dta = dtaSub_spark.collect()
 dta = pd.DataFrame(dta, columns=['date','rpi1','rpi2','rpi3','rpi4'])
 
 dta.index = dta['date']
-#dta = dta.drop(columns = ['date'])
-
 
 # # Generic plot
 plot_hourly = dta.plot().get_figure()
 plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
-
-#Write to csv
-#dta_hourly.to_csv("/home/jeston/projects/pi-cluster/data/rpi_avg.csv")
