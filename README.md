@@ -9,7 +9,8 @@ This repo is being used to document my project for building a small raspberry pi
 * 1 - Black Box USB-Powered 10/100 5-Port Switch
 * 3 - 6" Ethernet Network Cable
 
-<img src="images/img08.jpg" width="80">
+<img src="images/img08.jpg" width="160">
+
 ![](images/Screenshot.png)
 
 # System Monitor
