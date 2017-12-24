@@ -9,4 +9,4 @@
 0 1 * * * /home/jeston/projects/pi-cluster/scripts/github-commit.sh
 # 
 # Run spark-submit every 30 minutes
-*/30 * * * * bash /home/jeston/projects/pi-cluster/scripts/run-spark.sh
+*/30 * * * * /home/jeston/projects/pi-cluster/scripts/run-spark.sh
