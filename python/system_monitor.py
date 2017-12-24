@@ -47,6 +47,5 @@ dta = pd.DataFrame(dta, columns=['date','rpi1','rpi2','rpi3','rpi4'])
 dta.index = dta['date']
 
 # # Generic plot
-plt.xticks(rotation=90)
-plot_hourly = dta.plot().get_figure()
+plot_hourly = dta.plot(rot=0).get_figure()
 plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
