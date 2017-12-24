@@ -10,6 +10,7 @@ This repo is being used to document my project for building a small raspberry pi
 * 3 - 6" Ethernet Network Cable
 
 ![](images/img08.jpg =100x150)
+<img src="images/img08.jpg" width="48">
 ![](images/Screenshot.png)
 
 # System Monitor
