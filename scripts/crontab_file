@@ -9,4 +9,7 @@
 0 1 * * * /home/jeston/projects/pi-cluster/scripts/github-commit.sh
 # 
 # Run spark-submit every 30 minutes
-*/30 * * * * /home/jeston/projects/pi-cluster/scripts/run-spark.sh
+#*/30 * * * * /home/jeston/projects/pi-cluster/scripts/run-spark.sh
+#
+# Run the spark program, sh isnt working
+*/30 * * * * cd /home/jeston/projects/pi-cluster && /home/jeston/apps/spark-2.2/bin/spark-submit /home/jeston/projects/pi-cluster/python/system_monitor.py > /home/jeston/projects/pi-cluster/logs/output.log
