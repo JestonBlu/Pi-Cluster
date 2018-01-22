@@ -8,6 +8,7 @@ import numpy as np
 import datetime as dt
 import os
 import socket
+import json
 
 
 def get_stats():
@@ -40,6 +41,11 @@ def get_stats():
         "mem_pct": mem_pct
     }
 
-    return print(stats)
+    return stats
 
-get_stats()
+x  = get_stats()
+
+path = '/home/jeston/' + x.get("host") + ".json"
+
+with open(path, 'w') as outfile:
+    json.dump(x, outfile)
