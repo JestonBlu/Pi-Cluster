@@ -27,8 +27,8 @@ def get_stats():
         '''grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}' ''').readline()), 1)
 
     # Get CPU Type
-    cpu_tmp = int(subprocess.check_output(
-        ['cat /sys/class/thermal/thermal_zone0/temp'], shell=True)) / 1000
+    cpu_tmp = round(subprocess.check_output(
+        ['cat /sys/class/thermal/thermal_zone0/temp'], shell=True), 1) / 1000
 
     # Combine the data
     stats = {

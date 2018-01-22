@@ -17,6 +17,8 @@ rpi2 = subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/p
 rpi3 = subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 rpi4 = subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 
+rpi1.get('cpu_tmp')
+
 # Combine the temps
 stats = {
     'date' : time,
@@ -41,6 +43,7 @@ stats = {
     'rpi4_mem_fre' : pd.Series(rpi4.get('mem_fre')),
     'rpi4_mem_tot' : pd.Series(rpi4.get('mem_tot'))
 }
+
 
 stats = pd.DataFrame(stats)
 
