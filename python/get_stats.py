@@ -3,9 +3,6 @@ This script is used to data about the RPIs and store them as a file on the NFS f
 '''
 
 import subprocess
-import pandas as pd
-import numpy as np
-import datetime as dt
 import os
 import socket
 import json
