@@ -18,16 +18,18 @@ rpi2 = subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/p
 rpi3 = subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 rpi4 = subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 
-with open('/home/jeston/rpi1.json') as x:
+loc = "/home/jeston/nfs/"
+
+with open(loc + 'rpi1.json') as x:
     rpi1 = json.load(x)
 
-with open('/home/jeston/rpi2.json') as x:
+with open(loc + 'rpi2.json') as x:
     rpi2 = json.load(x)
 
-with open('/home/jeston/rpi3.json') as x:
+with open(loc + 'rpi3.json') as x:
     rpi3 = json.load(x)
 
-with open('/home/jeston/rpi4.json') as x:
+with open(loc + 'rpi4.json') as x:
     rpi4 = json.load(x)
 
 # Combine the temps
@@ -61,7 +63,7 @@ stats = pd.DataFrame(stats)
 stats.head()
 
 # Check to see if the current data file is empty
-size = os.stat('/home/jeston/nfs/rpi_stats.csv').st_size
+size = os.stat(loc + 'rpi_stats.csv').st_size
 
 # Create an empty df if the file is empty
 new = {
@@ -92,8 +94,8 @@ new = {
 if size == 0:
     cpu_in = pd.DataFrame(new)
 else:
-    cpu_in = pd.read_csv("/home/jeston/nfs/rpi_stats.csv")
+    cpu_in = pd.read_csv(loc + 'rpi_stats.csv')
 
 # Append to file
 cpu_out = cpu_in.append(cpu)
-cpu_out.to_csv("/home/jeston/nfs/rpi_stats.csv", index=False)
+cpu_out.to_csv(loc + "rpi_stats.csv", index=False)
