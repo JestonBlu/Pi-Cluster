@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import datetime as dt
 import os
+import ast
 
 # Time of scan
 time = dt.datetime.now()
@@ -17,7 +18,10 @@ rpi2 = subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/p
 rpi3 = subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 rpi4 = subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 
-rpi1.get('cpu_tmp')
+rpi1 = ast.literal_eval(rpi1)
+rpi2 = ast.literal_eval(rpi2)
+rpi3 = ast.literal_eval(rpi3)
+rpi4 = ast.literal_eval(rpi4)
 
 # Combine the temps
 stats = {
