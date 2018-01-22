@@ -25,7 +25,7 @@ def get_stats():
 
     # Get CPI Percent
     cpu_pct = round(float(os.popen(
-        '''grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}' ''').readline()), 1)
+        '''grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}' ''').readline()) * 100, 1)
 
     # Get CPU Type
     cpu_tmp = float(subprocess.check_output(
