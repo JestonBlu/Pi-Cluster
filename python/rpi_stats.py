@@ -17,11 +17,6 @@ rpi2 = int(subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/b
 rpi3 = int(subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True))
 rpi4 = int(subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True))
 
-rpi1 = {'mem_tot': 936, 'host': 'rpi2', 'cpu_pct': 0.3, 'cpu_tmp': 56.92, 'mem_pct': 7.6, 'mem_fre': 865}
-rpi2 = {'mem_tot': 936, 'host': 'rpi2', 'cpu_pct': 0.3, 'cpu_tmp': 56.92, 'mem_pct': 7.6, 'mem_fre': 865}
-rpi3 = {'mem_tot': 936, 'host': 'rpi2', 'cpu_pct': 0.3, 'cpu_tmp': 56.92, 'mem_pct': 7.6, 'mem_fre': 865}
-rpi4 = {'mem_tot': 936, 'host': 'rpi2', 'cpu_pct': 0.3, 'cpu_tmp': 56.92, 'mem_pct': 7.6, 'mem_fre': 865}
-
 # Combine the temps
 stats = {
     'date' : time,
