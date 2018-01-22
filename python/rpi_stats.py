@@ -97,5 +97,5 @@ else:
     cpu_in = pd.read_csv(loc + 'rpi_stats.csv')
 
 # Append to file
-cpu_out = cpu_in.append(cpu)
+cpu_out = cpu_in.append(stats)
 cpu_out.to_csv(loc + "rpi_stats.csv", index=False)
