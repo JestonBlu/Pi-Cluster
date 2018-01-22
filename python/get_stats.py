@@ -45,7 +45,7 @@ def get_stats():
 
 x  = get_stats()
 
-path = '/home/jeston/' + x.get("host") + ".json"
+path = '/home/jeston/nfs/' + x.get("host") + ".json"
 
 with open(path, 'w') as outfile:
     json.dump(x, outfile)
