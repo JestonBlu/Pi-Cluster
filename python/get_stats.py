@@ -7,7 +7,6 @@ import os
 import socket
 import json
 
-
 def get_stats():
     # Get Computer Name
     host = socket.gethostname()
