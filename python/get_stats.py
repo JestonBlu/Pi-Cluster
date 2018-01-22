@@ -36,7 +36,7 @@ def get_stats():
         "cpu_pct": cpu_pct,
         "cpu_tmp": cpu_tmp,
         "mem_tot": mem_tot,
-        "mem_fre": mem_usd,
+        "mem_fre": mem_fre,
         "mem_pct": mem_pct
     }
 
