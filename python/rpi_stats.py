@@ -12,10 +12,10 @@ time = dt.datetime.now()
 time = pd.to_datetime(time)
 
 # Get Temperature of CPU in Celcius
-rpi1 = int(subprocess.check_output(['ssh -tq rpi1 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True))
-rpi2 = int(subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True))
-rpi3 = int(subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True))
-rpi4 = int(subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True))
+rpi1 = subprocess.check_output(['ssh -tq rpi1 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+rpi2 = subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+rpi3 = subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+rpi4 = subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 
 # Combine the temps
 stats = {
