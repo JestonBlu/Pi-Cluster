@@ -39,22 +39,18 @@ stats = {
     'rpi1_cpu_pct' : pd.Series(rpi1.get('cpu_pct')),
     'rpi1_mem_pct' : pd.Series(rpi1.get('mem_pct')),
     'rpi1_mem_fre' : pd.Series(rpi1.get('mem_fre')),
-    'rpi1_mem_tot' : pd.Series(rpi1.get('mem_tot')),
     'rpi2_cpu_tmp' : pd.Series(rpi2.get('cpu_tmp')),
     'rpi2_cpu_pct' : pd.Series(rpi2.get('cpu_pct')),
     'rpi2_mem_pct' : pd.Series(rpi2.get('mem_pct')),
     'rpi2_mem_fre' : pd.Series(rpi2.get('mem_fre')),
-    'rpi2_mem_tot' : pd.Series(rpi2.get('mem_tot')),
     'rpi3_cpu_tmp' : pd.Series(rpi3.get('cpu_tmp')),
     'rpi3_cpu_pct' : pd.Series(rpi3.get('cpu_pct')),
     'rpi3_mem_pct' : pd.Series(rpi3.get('mem_pct')),
     'rpi3_mem_fre' : pd.Series(rpi3.get('mem_fre')),
-    'rpi3_mem_tot' : pd.Series(rpi3.get('mem_tot')),
     'rpi4_cpu_tmp' : pd.Series(rpi4.get('cpu_tmp')),
     'rpi4_cpu_pct' : pd.Series(rpi4.get('cpu_pct')),
     'rpi4_mem_pct' : pd.Series(rpi4.get('mem_pct')),
-    'rpi4_mem_fre' : pd.Series(rpi4.get('mem_fre')),
-    'rpi4_mem_tot' : pd.Series(rpi4.get('mem_tot'))
+    'rpi4_mem_fre' : pd.Series(rpi4.get('mem_fre'))
 }
 
 
@@ -73,22 +69,18 @@ new = {
     'rpi1_cpu_pct' : pd.Series(np.nan),
     'rpi1_mem_pct' : pd.Series(np.nan),
     'rpi1_mem_fre' : pd.Series(np.nan),
-    'rpi1_mem_tot' : pd.Series(np.nan),
     'rpi2_cpu_tmp' : pd.Series(np.nan),
     'rpi2_cpu_pct' : pd.Series(np.nan),
     'rpi2_mem_pct' : pd.Series(np.nan),
     'rpi2_mem_fre' : pd.Series(np.nan),
-    'rpi2_mem_tot' : pd.Series(np.nan),
     'rpi3_cpu_tmp' : pd.Series(np.nan),
     'rpi3_cpu_pct' : pd.Series(np.nan),
     'rpi3_mem_pct' : pd.Series(np.nan),
     'rpi3_mem_fre' : pd.Series(np.nan),
-    'rpi3_mem_tot' : pd.Series(np.nan),
     'rpi4_cpu_tmp' : pd.Series(np.nan),
     'rpi4_cpu_pct' : pd.Series(np.nan),
     'rpi4_mem_pct' : pd.Series(np.nan),
-    'rpi4_mem_fre' : pd.Series(np.nan),
-    'rpi4_mem_tot' : pd.Series(np.nan)
+    'rpi4_mem_fre' : pd.Series(np.nan)
     }
 
 if size == 0:
