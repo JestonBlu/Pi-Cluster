@@ -19,10 +19,10 @@ spark = SparkSession \
 
 userSchema = StructType() \
     .add("date", "timestamp") \
-    .add("rpi1", "double") \
-    .add("rpi2", "double") \
-    .add("rpi3", "double") \
-    .add("rpi4", "double")
+    .add("rpi1_cpu_pct", "double") \
+    .add("rpi2_cpu_pct", "double") \
+    .add("rpi3_cpu_pct", "double") \
+    .add("rpi4_cpu_pct", "double")
 
 # Read file from share drive
 dta = spark.read.csv("/home/jeston/nfs/rpi_stats.csv", schema = userSchema)
