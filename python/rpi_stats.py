@@ -64,7 +64,6 @@ size = os.stat(loc + 'rpi_stats.csv').st_size
 # Create an empty df if the file is empty
 new = {
     'date' : time + pd.Timedelta(seconds=-15),
-    'rpi1' : pd.Series(np.nan),
     'rpi1_cpu_tmp' : pd.Series(np.nan),
     'rpi1_cpu_pct' : pd.Series(np.nan),
     'rpi1_mem_pct' : pd.Series(np.nan),
