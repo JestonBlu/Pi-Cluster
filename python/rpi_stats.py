@@ -13,10 +13,10 @@ time = dt.datetime.now()
 time = pd.to_datetime(time)
 
 # Get Temperature of CPU in Celcius
-rpi1 = subprocess.check_output(['ssh -tq rpi1 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
-rpi2 = subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
-rpi3 = subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
-rpi4 = subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+subprocess.check_output(['ssh -tq rpi1 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 
 loc = "/home/jeston/nfs/"
 
