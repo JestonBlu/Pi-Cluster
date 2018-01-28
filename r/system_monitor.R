@@ -22,7 +22,8 @@ x$typ = ifelse(substr(x$variable, 6, 13) == "cpu_pct", "CPU PCT",  x$typ)
 x$typ = ifelse(substr(x$variable, 6, 13) == "mem_fre", "MEM FREE", x$typ)
 x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "MEM PCT",  x$typ)
 
-
+x$date = substr(x$date, 1, 19)
+x$date = as.POSIXlt(x$date)
 
 g1 = ggplot(x) +
   geom_line(aes(x = date, y = value, color = rpi)) +
