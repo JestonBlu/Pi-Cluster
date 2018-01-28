@@ -18,4 +18,3 @@ This repo is being used to document my project for building a small raspberry pi
 The following plot is the output of a pyspark job that plots the cpu temperature of all 4 rpis
 
 ![](output/cpu.png)
-![](output/cpu.jpeg)

@@ -1,7 +1,9 @@
 library(ggplot2)
 library(reshape2)
+library(extrafont)
 #library(SparkR)
 
+loadfonts(device = "postscript", quiet = FALSE)
 
 #sparkR.session()
 
