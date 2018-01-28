@@ -9,7 +9,6 @@ from pyspark.sql.functions import *
 
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
 
 #.config("spark.driver.bindAddress", "127.0.0.1") \
 spark = SparkSession \
@@ -19,10 +18,22 @@ spark = SparkSession \
 
 userSchema = StructType() \
     .add("date", "timestamp") \
+    .add("rpi1_cpu_tmp", "double") \
     .add("rpi1_cpu_pct", "double") \
+    .add("rpi1_mem_pct", "double") \
+    .add("rpi1_mem_fre", "double") \
+    .add("rpi2_cpu_tmp", "double") \
     .add("rpi2_cpu_pct", "double") \
+    .add("rpi2_mem_pct", "double") \
+    .add("rpi2_mem_fre", "double") \
+    .add("rpi3_cpu_tmp", "double") \
     .add("rpi3_cpu_pct", "double") \
-    .add("rpi4_cpu_pct", "double")
+    .add("rpi3_mem_pct", "double") \
+    .add("rpi3_mem_fre", "double") \
+    .add("rpi4_cpu_tmp", "double") \
+    .add("rpi4_cpu_pct", "double") \
+    .add("rpi4_mem_pct", "double") \
+    .add("rpi4_mem_fre", "double")
 
 # Read file from share drive
 dta = spark.read.csv("/home/jeston/nfs/rpi_stats.csv", schema = userSchema)
@@ -38,14 +49,6 @@ dt = dt.strftime("%Y-%m-%d")
 dtaSub = dta.filter(dta.date > dt)
 
 # Aggregate the data over 3 hours
-dtaSub_spark = dtaSub.groupBy(window("date", windowDuration="1 hour")).avg()
+dtaSub = dtaSub.groupBy(window("date", windowDuration="1 day")).avg()
 
-# Convert to a pandas dataframe
-dta = dtaSub_spark.collect()
-dta = pd.DataFrame(dta, columns=['date','rpi1','rpi2','rpi3','rpi4'])
-
-dta.index = dta['date']
-
-# # Generic plot
-plot_hourly = dta.plot(rot=0).get_figure()
-plot_hourly.savefig("/home/jeston/projects/pi-cluster/output/cpu.png")
+dtaSub.show()
