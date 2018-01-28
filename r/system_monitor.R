@@ -32,6 +32,6 @@ g1 = ggplot(x) +
   scale_x_datetime("") +
   scale_color_discrete("") +
   facet_wrap(~typ, scales = "free") +
-  theme(text=element_text(family = "mono"))
+  theme(text = element_text(family = "mono"))
 
 ggsave("output/cpu.png", g1, width = 7, height = 5)
