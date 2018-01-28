@@ -1,10 +1,7 @@
 library(ggplot2)
 library(reshape2)
-library(extrafont)
+
 #library(SparkR)
-
-loadfonts(device = "postscript", quiet = FALSE)
-
 #sparkR.session()
 
 x = read.csv("data/rpi_stats.csv")
@@ -27,9 +24,14 @@ x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "MEM PCT",  x$typ)
 x$date = substr(x$date, 1, 19)
 x$date = as.POSIXlt(x$date)
 
+x$rpi = factor(x$rpi)
+x$typ = factor(x$typ)
+
+
 g1 = ggplot(x) +
   geom_line(aes(x = date, y = value, color = rpi)) +
+  scale_x_datetime("") +
   scale_color_discrete("") +
   facet_wrap(~typ, scales = "free")
 
-ggsave("output/cpu.png", plot = g1, device = "png", width = 7, height = 5, type = "cairo")
+ggsave("output/cpu.png", g1, width = 7, height = 5)
