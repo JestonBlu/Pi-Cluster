@@ -30,4 +30,4 @@ g1 = ggplot(x) +
   scale_color_discrete("") +
   facet_wrap(~typ, scales = "free")
 
-ggsave("output/cpu.png", plot = g1, device = "png", width = 7, height = 5)
+ggsave("output/cpu.jpeg", plot = g1, device = "jpeg", width = 7, height = 5)
