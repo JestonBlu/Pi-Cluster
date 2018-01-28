@@ -1,9 +1,9 @@
 library(ggplot2)
 library(reshape2)
-library(SparkR)
+#library(SparkR)
 
 
-sparkR.session()
+#sparkR.session()
 
 x = read.csv("data/rpi_stats.csv")
 x = as.data.frame(x)
