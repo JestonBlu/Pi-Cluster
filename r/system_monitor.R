@@ -27,7 +27,6 @@ x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "MEM PCT",  x$typ)
 g1 = ggplot(x) +
   geom_line(aes(x = date, y = value, color = rpi)) +
   scale_color_discrete("") +
-  scale_x_date("") +
   facet_wrap(~typ, scales = "free")
 
 ggsave("output/cpu.png", g1, width = 7, height = 5)
