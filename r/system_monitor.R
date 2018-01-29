@@ -27,10 +27,14 @@ x$date = substr(x$date, 1, 19)
 x$date = as.POSIXlt(x$date)
 
 g1 = ggplot(x) +
-  geom_line(aes(x = date, y = value / 100, color = rpi)) +
+  geom_line(aes(x = date, y = value, color = rpi)) +
   scale_x_datetime("") +
+  scale_y_continuous("") +
   scale_color_discrete("") +
   facet_wrap(~typ, scales = "free") +
-  theme(text = element_text(family = "mono"))
+  theme(text = element_text(family = "mono"),
+    plot.title = element_text(hjust = .5),
+    plot.subtitle = element_text(hjust = .5)) +
+  ggtitle("Raspber Pi Cluster Stats", "(Last 24 Hours)")
 
 ggsave("output/cpu.png", width = 7, height = 5)
