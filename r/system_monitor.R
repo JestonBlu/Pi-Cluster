@@ -26,44 +26,11 @@ x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "RAM % Used",  x$typ)
 x$date = substr(x$date, 1, 19)
 x$date = as.POSIXlt(x$date)
 
-g1 = ggplot(subset(x, typ == 'CPU % Used')) +
+g1 = ggplot(x) +
   geom_line(aes(x = date, y = value / 100, color = rpi)) +
   scale_x_datetime("") +
-  scale_y_continuous("", labels = percent) +
   scale_color_discrete("") +
   facet_wrap(~typ, scales = "free") +
   theme(text = element_text(family = "mono"))
 
-g2 = ggplot(subset(x, typ == 'RAM % Used')) +
-geom_line(aes(x = date, y = value / 100, color = rpi)) +
-scale_x_datetime("") +
-scale_y_continuous("", labels = percent) +
-scale_color_discrete("") +
-facet_wrap(~typ, scales = "free") +
-theme(text = element_text(family = "mono"))
-
-g3 = ggplot(subset(x, typ == 'CPU Temp')) +
-geom_line(aes(x = date, y = value / 100, color = rpi)) +
-scale_x_datetime("") +
-scale_y_continuous("", labels = percent) +
-scale_color_discrete("") +
-facet_wrap(~typ, scales = "free") +
-theme(text = element_text(family = "mono"))
-
-g4 = ggplot(subset(x, typ == 'RAM Free')) +
-geom_line(aes(x = date, y = value / 100, color = rpi)) +
-scale_x_datetime("") +
-scale_y_continuous("", labels = percent) +
-scale_color_discrete("") +
-facet_wrap(~typ, scales = "free") +
-theme(text = element_text(family = "mono"))
-
-
-g5 = grid.arrange(g1, g2, g3, g4, nrow = 2)
-
-ggsave("output/cpu.png", g1, width = 7, height = 5)
-
-
-
-
-g1
+ggsave("output/cpu.png", width = 7, height = 5)
