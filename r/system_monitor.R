@@ -1,5 +1,7 @@
 library(ggplot2)
 library(reshape2)
+library(scales)
+library(gridExtra)
 
 #library(SparkR)
 #sparkR.session()
@@ -16,22 +18,23 @@ x$rpi = ifelse(substr(x$variable, 1, 4) == "rpi3", "RPI 3", x$rpi)
 x$rpi = ifelse(substr(x$variable, 1, 4) == "rpi4", "RPI 4", x$rpi)
 
 x$typ = ""
-x$typ = ifelse(substr(x$variable, 6, 13) == "cpu_tmp", "CPU TEMP", x$typ)
-x$typ = ifelse(substr(x$variable, 6, 13) == "cpu_pct", "CPU PCT",  x$typ)
-x$typ = ifelse(substr(x$variable, 6, 13) == "mem_fre", "MEM FREE", x$typ)
-x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "MEM PCT",  x$typ)
+x$typ = ifelse(substr(x$variable, 6, 13) == "cpu_tmp", "CPU Temp", x$typ)
+x$typ = ifelse(substr(x$variable, 6, 13) == "cpu_pct", "CPU % Used",  x$typ)
+x$typ = ifelse(substr(x$variable, 6, 13) == "mem_fre", "RAM Free", x$typ)
+x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "RAM % Used",  x$typ)
 
 x$date = substr(x$date, 1, 19)
 x$date = as.POSIXlt(x$date)
 
-x$rpi = factor(x$rpi)
-x$typ = factor(x$typ)
-
 g1 = ggplot(x) +
   geom_line(aes(x = date, y = value, color = rpi)) +
   scale_x_datetime("") +
+  scale_y_continuous("") +
   scale_color_discrete("") +
   facet_wrap(~typ, scales = "free") +
-  theme(text = element_text(family = "mono"))
+  theme(text = element_text(family = "mono"),
+    plot.title = element_text(hjust = .5),
+    plot.subtitle = element_text(hjust = .5)) +
+  ggtitle("Raspber Pi Cluster Stats", "(Last 24 Hours)")
 
-ggsave("output/cpu.png", g1, width = 7, height = 5)
+ggsave("output/cpu.png", width = 7, height = 5)
