@@ -3,10 +3,7 @@ library(reshape2)
 library(scales)
 library(gridExtra)
 
-#library(SparkR)
-#sparkR.session()
-
-x = read.csv("data/rpi_stats.csv")
+x = read.csv("/home/jeston/projects/pi-cluster/data/rpi_stats.csv")
 x = as.data.frame(x)
 x = na.omit(x)
 x = melt(x, id.vars = "date")
@@ -37,4 +34,4 @@ g1 = ggplot(x) +
     plot.subtitle = element_text(hjust = .5)) +
   ggtitle("Raspber Pi Cluster Stats", "(Last 24 Hours)")
 
-ggsave("output/cpu.png", width = 7, height = 5)
+ggsave("/home/jeston/projects/pi-cluster/output/cpu.png", g1, width = 7, height = 5)
