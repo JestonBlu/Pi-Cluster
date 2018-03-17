@@ -1,18 +1,17 @@
-#
 # Launch the python script to collect rpi data
 */1 * * * * /home/jeston/projects/pi-cluster/scripts/launch-rpi-stats.sh
-#
+
 # Copy the python output from the nfs drive to the github repo
 */5 * * * * cp /home/jeston/nfs/rpi_stats.csv /home/jeston/projects/pi-cluster/data/
-#
+
 # Run spark-submit every 30 minutes
 */30 * * * * bash /home/jeston/projects/pi-cluster/scripts/run-spark.sh
-#
+
 # Run the R program that visualizes the RPI data everyday at midnight
 0 0 * * * /home/jeston/projects/pi-cluster/scripts/run-r.sh
-#
+
 # Autocommit to github at 1AM every day
 0 1 * * * /home/jeston/projects/pi-cluster/scripts/github-commit.sh
-#
+
 # Erase file every night at 1:01AM
 1 1 * * * > /home/jeston/nfs/rpi_stats.csv
