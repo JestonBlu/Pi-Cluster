@@ -5,7 +5,7 @@
 */5 * * * * cp /home/jeston/nfs/rpi_stats.csv /home/jeston/projects/pi-cluster/data/
 
 # Run spark-submit every 30 minutes
-*/30 * * * * bash /home/jeston/projects/pi-cluster/scripts/run-spark.sh
+#*/30 * * * * bash /home/jeston/projects/pi-cluster/scripts/run-spark.sh
 
 # Run the R program that visualizes the RPI data everyday at midnight
 0 0 * * * /home/jeston/projects/pi-cluster/scripts/run-r.sh
