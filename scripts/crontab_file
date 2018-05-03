@@ -11,7 +11,7 @@
 0 0 * * * /home/jeston/projects/pi-cluster/scripts/run-r.sh
 
 # Autocommit to github at 1AM every day
-0 1 */5 * * /home/jeston/projects/pi-cluster/scripts/github-commit.sh
+0 1 * * * /home/jeston/projects/pi-cluster/scripts/github-commit.sh
 
 # Erase file every night at 1:01AM
-1 1 * * * > /home/jeston/nfs/rpi_stats.csv
+1 1 * * 0 > /home/jeston/nfs/rpi_stats.csv
