@@ -16,7 +16,7 @@ time = pd.to_datetime(time)
 subprocess.check_output(['ssh -tq rpi1 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 subprocess.check_output(['ssh -tq rpi2 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 subprocess.check_output(['ssh -tq rpi3 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
-subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
+#subprocess.check_output(['ssh -tq rpi4 /home/jeston/apps/miniconda3/bin/python /home/jeston/nfs/get_stats.py'], shell=True)
 
 loc = "/home/jeston/nfs/"
 
@@ -29,8 +29,8 @@ with open(loc + 'rpi2.json') as x:
 with open(loc + 'rpi3.json') as x:
     rpi3 = json.load(x)
 
-with open(loc + 'rpi4.json') as x:
-    rpi4 = json.load(x)
+#with open(loc + 'rpi4.json') as x:
+#    rpi4 = json.load(x)
 
 # Combine the temps
 stats = {
@@ -46,11 +46,11 @@ stats = {
     'rpi3_cpu_tmp' : pd.Series(rpi3.get('cpu_tmp')),
     'rpi3_cpu_pct' : pd.Series(rpi3.get('cpu_pct')),
     'rpi3_mem_pct' : pd.Series(rpi3.get('mem_pct')),
-    'rpi3_mem_fre' : pd.Series(rpi3.get('mem_fre')),
-    'rpi4_cpu_tmp' : pd.Series(rpi4.get('cpu_tmp')),
-    'rpi4_cpu_pct' : pd.Series(rpi4.get('cpu_pct')),
-    'rpi4_mem_pct' : pd.Series(rpi4.get('mem_pct')),
-    'rpi4_mem_fre' : pd.Series(rpi4.get('mem_fre'))
+    'rpi3_mem_fre' : pd.Series(rpi3.get('mem_fre'))
+#    'rpi4_cpu_tmp' : pd.Series(rpi4.get('cpu_tmp')),
+#    'rpi4_cpu_pct' : pd.Series(rpi4.get('cpu_pct')),
+#    'rpi4_mem_pct' : pd.Series(rpi4.get('mem_pct')),
+#    'rpi4_mem_fre' : pd.Series(rpi4.get('mem_fre'))
 }
 
 
@@ -75,11 +75,11 @@ new = {
     'rpi3_cpu_tmp' : pd.Series(np.nan),
     'rpi3_cpu_pct' : pd.Series(np.nan),
     'rpi3_mem_pct' : pd.Series(np.nan),
-    'rpi3_mem_fre' : pd.Series(np.nan),
-    'rpi4_cpu_tmp' : pd.Series(np.nan),
-    'rpi4_cpu_pct' : pd.Series(np.nan),
-    'rpi4_mem_pct' : pd.Series(np.nan),
-    'rpi4_mem_fre' : pd.Series(np.nan)
+    'rpi3_mem_fre' : pd.Series(np.nan)
+#    'rpi4_cpu_tmp' : pd.Series(np.nan),
+#    'rpi4_cpu_pct' : pd.Series(np.nan),
+#    'rpi4_mem_pct' : pd.Series(np.nan),
+#    'rpi4_mem_fre' : pd.Series(np.nan)
     }
 
 if size == 0:
