@@ -10,7 +10,6 @@ from pyspark.sql.functions import *
 import pandas as pd
 import datetime
 
-#.config("spark.driver.bindAddress", "127.0.0.1") \
 spark = SparkSession \
     .builder \
     .appName("System Monitor") \
@@ -29,16 +28,13 @@ userSchema = StructType() \
     .add("rpi3_cpu_tmp", "double") \
     .add("rpi3_cpu_pct", "double") \
     .add("rpi3_mem_pct", "double") \
-    .add("rpi3_mem_fre", "double") \
-    .add("rpi4_cpu_tmp", "double") \
-    .add("rpi4_cpu_pct", "double") \
-    .add("rpi4_mem_pct", "double") \
-    .add("rpi4_mem_fre", "double")
+    .add("rpi3_mem_fre", "double")
 
 # Read file from share drive
 dta = spark.read.csv("/home/jeston/nfs/rpi_stats.csv", schema = userSchema)
+
 # desktop development
-#dta = spark.read.csv("data/rpi_stats.csv", schema = userSchema)
+# dta = spark.read.csv("data/rpi_stats.csv", schema = userSchema)
 
 # Pull the date from 5 days before today
 now = datetime.datetime.now()

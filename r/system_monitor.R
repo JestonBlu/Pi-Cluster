@@ -21,13 +21,14 @@ x$typ = ifelse(substr(x$variable, 6, 13) == "mem_fre", "RAM Free", x$typ)
 x$typ = ifelse(substr(x$variable, 6, 13) == "mem_pct", "RAM % Used",  x$typ)
 
 x$date = substr(x$date, 1, 19)
-x$date = as.POSIXlt(x$date)
+x$date = as.POSIXct(x$date)
 
 x$rpi = factor(x$rpi)
 x$typ = factor(x$typ)
 
+
 g1 = ggplot(subset(x, typ == 'CPU Temp')) +
-  geom_line(aes(x = date, y = value, color = rpi)) +
+  geom_line(aes(x = date, y = value, color = rpi), alpha = .5) +
   scale_x_datetime("") +
   scale_y_continuous("") +
   scale_color_discrete("") +
@@ -35,12 +36,12 @@ g1 = ggplot(subset(x, typ == 'CPU Temp')) +
   theme(text = element_text(family = "mono"),
     plot.title = element_text(hjust = .5),
     plot.subtitle = element_text(hjust = .5)) +
-  ggtitle("Raspber Pi Cluster Stats", "(Last 24 Hours)")
+  ggtitle("Raspber Pi Cluster Stats")
 
 g2 = ggplot(subset(x, typ == 'CPU % Used')) +
-  geom_line(aes(x = date, y = value, color = rpi)) +
+  geom_line(aes(x = date, y = value/100, color = rpi), alpha = .5) +
   scale_x_datetime("") +
-  scale_y_continuous("") +
+  scale_y_continuous("", labels = percent) +
   scale_color_discrete("", guide = FALSE) +
   facet_wrap(~typ, scales = "free") +
   theme(text = element_text(family = "mono"),
@@ -48,9 +49,9 @@ g2 = ggplot(subset(x, typ == 'CPU % Used')) +
       plot.subtitle = element_text(hjust = .5))
 
 g3 = ggplot(subset(x, typ == 'RAM % Used')) +
-  geom_line(aes(x = date, y = value, color = rpi)) +
+  geom_line(aes(x = date, y = value/100, color = rpi), alpha = .5) +
   scale_x_datetime("") +
-  scale_y_continuous("") +
+  scale_y_continuous("", labels = percent) +
   scale_color_discrete("", guide = FALSE) +
   facet_wrap(~typ, scales = "free") +
   theme(text = element_text(family = "mono"),
