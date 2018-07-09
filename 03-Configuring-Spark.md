@@ -7,13 +7,19 @@ Download and install the required software on each pi
 # Install Java and Yaourt
 sudo pacman -S jre8-openjdk-headless yajl
 
-git clone https://aur.archlinux.org/package-query.git
-cd package-query
+# I used to use yaourt before it went dormant and started becoming unreliable
+git clone https://aur.archlinux.org/aurman.git
+cd aurman
 makepkg -si
 
-git clone https://aur.archlinux.org/yaourt.git
-cd yaourt
-makepkg -si
+# Old yaourt install
+# git clone https://aur.archlinux.org/package-query.git
+# cd package-query
+# makepkg -si
+#
+# git clone https://aur.archlinux.org/yaourt.git
+# cd yaourt
+# makepkg -si
 
 # Download a python distribution
 wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-armv7l.sh
@@ -48,8 +54,8 @@ export PATH="$SPARK_HOME/bin:$PATH"
 Since the pis are all limited to a single GB of memory, I need to make changes to the spark conf file so there is some memory left for the OS. Change the apps/spark-2.2/conf/spark-env.sh to add
 
 ```sh
-SPARK_WORKER_CORES = 4
-SPARK_WORKER_MEMORY = 1G
+SPARK_WORKER_CORES=2
+SPARK_WORKER_MEMORY=500m
 ```
 
 Next add the machine names to the apps/spark-2.2/slaves
@@ -65,8 +71,9 @@ The function for submitting spark jobs is `spark-submit`. There are numerous par
 ```sh
 # ~/apps/spark-2.2/conf/spark-default.conf
 spark.driver.memory                500m
-spark.executor.memory              900m
+spark.executor.memory              500m
 spark.master                       spark://rpi1:7077
+spark.executor.cores               2
 ```
 
 There are startup scripts in apps/spark-2.2/sbin for lauching all of the nodes at once. Execute `spark-2.2/sbin/start-all.sh` to start the cluster. Then check out the logs in `spark-2.2/logs` to see the web-url print out. Here is a screenshot of the final product.

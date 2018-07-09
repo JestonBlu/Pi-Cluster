@@ -1,5 +1,7 @@
 # Assembly
 
+Update: The RPI2b eventually corrupted and couldn't keep up with the RPI3s so I ended up removing it from the cluster
+
 1) Assemble the pi's and case. (shown are 3 pi's, but i ended up added a 4th RPI 2b)
 ![](images/img01.jpg)
 ![](images/img03.jpg)
