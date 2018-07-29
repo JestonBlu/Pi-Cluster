@@ -65,14 +65,7 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
 
 ```
 
-* Start the service to see if it works.
-
-```sh
-systemctl start dhcpd4@eth0.service
-
-```
-
-**NOTE**: This is where I started running into problems. I was able to assign a static ip address to the pi from the command line, but i was not able to get it to work on boot. There were several guides online that showed how to set up a profile using netctl, but it only seemed to work on wireless. When I went to enable dhcpd systemctl would fail because it was trying to start the service before eth0 had an ip assigned. I got around this by putting the shell commands in a bash script and enabling it to run on boot. See below. I started the script with my intials so I could easily find it later.
+This is where I started running into problems. I was able to assign a static ip address to the pi from the command line, but i was not able to get it to work on boot. There were several guides online that showed how to set up a profile using netctl, but it only seemed to work on wireless. When I went to enable dhcpd systemctl would fail because it was trying to start the service before eth0 had an ip assigned. I got around this by putting the shell commands in a bash script and enabling it to run on boot. See below. I started the script with my intials so I could easily find it later.
 
 * Create the file /usr/bin/jeb-start-dhcpd.sh
 
