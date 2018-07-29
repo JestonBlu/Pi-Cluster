@@ -1,6 +1,20 @@
 # Installing the OS
 I already use arch on my desktop so im using that on the Pi's. The arch documentation for downloading and setting up the ARM OS is straightfoward so I will not repeat it, but the link to the site is [here](https://archlinuxarm.org/platforms/armv8/broadcom/raspberry-pi-3).
 
+Get a working internet connection
+
+```sh
+# As root
+wifi-menu
+
+netctl enable [wifi-menu profile]
+
+# Upgrade the system
+pacman -Syu
+pacman -S dhcp
+
+```
+
 # Networking the Pi's Together
 After booting up all of the pi's with a new arch install, the first thing I did was set up a server so the pi's could communicate through the network switch. This was fairily challenging for me and I had to do a lot of searching and reading before I got everything to work.
 
@@ -44,7 +58,7 @@ subnet 192.168.1.0 netmask 255.255.255.0 {
       fixed-address 192.168.1.3;
    }
    host rpi4 {
-      hardware ethernet b8:27:eb:0b:4e:2c;
+      hardware ethernet b8:27:eb:6f:c0:cb;
       fixed-address 192.168.1.4;
    }
 }
