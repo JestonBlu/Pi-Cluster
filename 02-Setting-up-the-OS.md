@@ -100,7 +100,7 @@ WantedBy=multi-user.target
 systemctl enable jeb-start-dhcpd.service
 ```
 
-* You should also enable the DHCPCD client serivce on each of the other pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items.
+* You should also enable the DHCPCD client serivce on all of the pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items.
 
 ```sh
 systemctl enable dhcpcd@eth0.service
