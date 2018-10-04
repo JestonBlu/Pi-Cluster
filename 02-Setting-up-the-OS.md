@@ -38,8 +38,8 @@ log-facility local7;
 # The internal cluster network
 option broadcast-address 192.168.1.255;
 option routers 192.168.1.1;
-default-lease-time 600;
-max-lease-time 7200;
+default-lease-time -1;
+max-lease-time -1;
 option domain-name "cluster";
 option domain-name-servers 8.8.8.8, 8.8.4.4;
 subnet 192.168.1.0 netmask 255.255.255.0 {
