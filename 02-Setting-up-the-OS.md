@@ -11,7 +11,7 @@ netctl enable [wifi-menu profile]
 
 # Upgrade the system
 pacman -Syu
-pacman -S dhcp
+pacman -S dhcp # edit - i stopped using dhcp
 
 ```
 
@@ -21,6 +21,8 @@ After booting up all of the pi's with a new arch install, the first thing I did 
 I designated the pi on the bottom of the stack the head node with hostname rpi1. The others got rpi[2-4]. The steps for setting up the server went like this:
 
 * Assign a static IP to the ethernet device (eth0). In my setup I am using 192.168.1.0 as the domain so the first server (head node) will get 192.168.1.1
+
+* **UPDATE**: I ran into more trouble setting up a dhcp server so in the end I just created a static ip for each of the pis individually. As a result the dhcpcd.conf setup is not necessary, but I left it as a reference incase i ever want to revisit it.
 
 ```sh
 # Assigns the static IP
@@ -162,7 +164,7 @@ userdel -r alarm
 # From rpi1, create a list of packages to download and create a local repo
 mkdir cluster.repo
 sudo pacman -Sp base-devel bash-completion git rsync nfs-utils yajl > ~/repo.list
-wget -P ~/cluster.repo/ -i repo.list
+for i in $(cat repo.list) ; do (cd ~/cluster.repo && curl -O $i); done
 cd cluster.repo
 repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
 
