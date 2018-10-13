@@ -6,91 +6,44 @@ Get a working internet connection
 ```sh
 # As root
 wifi-menu
-
 netctl enable [wifi-menu profile]
 
 # Upgrade the system
 pacman -Syu
-pacman -S dhcp # edit - i stopped using dhcp
-
 ```
 
 # Networking the Pi's Together
-After booting up all of the pi's with a new arch install, the first thing I did was set up a server so the pi's could communicate through the network switch. This was fairily challenging for me and I had to do a lot of searching and reading before I got everything to work.
-
-I designated the pi on the bottom of the stack the head node with hostname rpi1. The others got rpi[2-4]. The steps for setting up the server went like this:
+After booting up all of the pi's with a new arch install, the first thing I did was set up a server so the pi's could communicate through the network switch. I designated the pi on the bottom of the stack the head node with hostname rpi1. The others got rpi[2-4]. The steps for setting up the server went like this:
 
 * Assign a static IP to the ethernet device (eth0). In my setup I am using 192.168.1.0 as the domain so the first server (head node) will get 192.168.1.1
-
-* **UPDATE**: I ran into more trouble setting up a dhcp server so in the end I just created a static ip for each of the pis individually. As a result the dhcpcd.conf setup is not necessary, but I left it as a reference incase i ever want to revisit it.
+* I initially used dhcp to connect the network, but I repeatedly ran into problems so in the end I had each pi assign a static IP on boot.
 
 ```sh
 # Assigns the static IP
 ip addr add 192.168.1.1/24 broadcast 192.168.1.255 dev eth0
 ```
 
-* Fill out the dhcpd.conf file
-
-```sh
-# Fill out /etc/dhcpd.conf
-ddns-update-style none;
-authoritative;
-log-facility local7;
-
-# The internal cluster network
-option broadcast-address 192.168.1.255;
-option routers 192.168.1.1;
-default-lease-time -1;
-max-lease-time -1;
-option domain-name "cluster";
-option domain-name-servers 8.8.8.8, 8.8.4.4;
-subnet 192.168.1.0 netmask 255.255.255.0 {
-   range 192.168.1.14 192.168.1.250;
-
-   host rpi1 {
-      hardware ethernet b8:27:eb:22:60:fb;
-      fixed-address 192.168.1.1;
-   }
-   host rpi2 {
-      hardware ethernet b8:27:eb:a0:a1:7f;
-      fixed-address 192.168.1.2;
-   }
-   host rpi3 {
-      hardware ethernet b8:27:eb:68:b6:a3;
-      fixed-address 192.168.1.3;
-   }
-   host rpi4 {
-      hardware ethernet b8:27:eb:6f:c0:cb;
-      fixed-address 192.168.1.4;
-   }
-}
-
-```
-
-This is where I started running into problems. I was able to assign a static ip address to the pi from the command line, but i was not able to get it to work on boot. There were several guides online that showed how to set up a profile using netctl, but it only seemed to work on wireless. When I went to enable dhcpd systemctl would fail because it was trying to start the service before eth0 had an ip assigned. I got around this by putting the shell commands in a bash script and enabling it to run on boot. See below. I started the script with my intials so I could easily find it later.
-
-* Create the file /usr/bin/jeb-start-dhcpd.sh
+* Create the file /usr/bin/jeb-set-ip.sh
 
 ```sh
 #!/bin/sh
 ip addr add 192.168.1.1/24 broadcast 192.168.1.255 dev eth0
-systemctl start dhcpd4@eth0.service
 ```
 
 * Next make it executable
 
 ```sh
-chmod 755 /usr/bin/jeb-start-dhcpd.sh
+chmod 755 /usr/bin/jeb-set-ip.sh
 ```
 
-* Create a custom .service file to start the script on boot. `/etc/systemd/system/jeb-start-dhcpd.service`
+* Create a custom .service file to start the script on boot. `/etc/systemd/system/jeb-set-ip.service`
 
 ```sh
 [Unit]
-Description=Custom DHCPD Start up Script
+Description=Set a static IP
 
 [Service]
-ExecStart=/usr/bin/jeb-start-dhcpd.sh
+ExecStart=/usr/bin/jeb-set-ip.sh
 
 [Install]
 WantedBy=multi-user.target
@@ -99,13 +52,12 @@ WantedBy=multi-user.target
 * Enable the service
 
 ```sh
-systemctl enable jeb-start-dhcpd.service
+systemctl enable jeb-set-ip.service
 ```
 
-* You should also enable the DHCPCD client serivce on all of the pi's. While you are in there is a good idea to change the host name and enable SSHD and a few other items.
+# Configuring the OS
 
 ```sh
-systemctl enable dhcpcd@eth0.service
 systemctl enable sshd.service
 
 echo rpi[2-4] > /etc/hostname
@@ -128,7 +80,6 @@ swap none swap defaults 0 0
 
 ```
 
-
 * Append these IPs to the /etc/hosts file
 
 ```sh
@@ -137,8 +88,6 @@ swap none swap defaults 0 0
 192.168.1.3     rpi3      rpi3
 192.168.1.4     rpi4      rpi4
 ```
-
-# Configuring the OS
 
 Now install some packages. Only rpi1 has access to the internet so Im going to install the packages there and then copy the packages over to each of the other pi's and install them locally. First, I want to set up my user and change the default passwords.
 
@@ -170,23 +119,21 @@ repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
 
 # Temporarily copy the repos to each pi, once credentials are set up we should link
 # each pi to the rpi1 repository make sure the cluster-repo folder exists on each pi
-scp ~/cluster.repo/* alarm@rpi2:~/cluster.repo
-scp ~/cluster.repo/* alarm@rpi3:~/cluster.repo
-scp ~/cluster.repo/* alarm@rpi4:~/cluster.repo
+scp ~/cluster.repo/* username@rpi2:~/cluster.repo
+scp ~/cluster.repo/* username@rpi3:~/cluster.repo
+scp ~/cluster.repo/* username@rpi4:~/cluster.repo
 ```
 
 
 * Next you should log in to each pi, add the local rpi1 repo and install sudo so you can create the same user on all of the pis as well.
 
 ```sh
-# Using RPI2 as an example
-# Add a repo pointing to rpi:~/cluster-repo
 nano /etc/pacman.conf
 
 # Append this to the conf file
 SigLevel = Never
 [cluster.repo]
-Server = file:///home/alarm/cluster.repo/
+Server = file:///home/username/cluster.repo/
 
 # update pacman
 pacman -Syyu
