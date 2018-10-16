@@ -17,6 +17,7 @@ After booting up all of the pi's with a new arch install, the first thing I did 
 
 * Assign a static IP to the ethernet device (eth0). In my setup I am using 192.168.1.0 as the domain so the first server (head node) will get 192.168.1.1
 * I initially used dhcp to connect the network, but I repeatedly ran into problems so in the end I had each pi assign a static IP on boot.
+* For each of the pi's repeat all of the steps in this section for each pi. Be sure to make the appropriate ip changes or each pi.
 
 ```sh
 # Assigns the static IP
@@ -60,7 +61,7 @@ systemctl enable jeb-set-ip.service
 ```sh
 systemctl enable sshd.service
 
-echo rpi[2-4] > /etc/hostname
+echo rpi1 > /etc/hostname
 
 # Uncomment `en_US.UTF-8` in `/etc/locale.gen`, then run
 locale-gen
@@ -119,9 +120,9 @@ repo-add cluster.repo.db.tar.gz *.pkg.tar.xz
 
 # Temporarily copy the repos to each pi, once credentials are set up we should link
 # each pi to the rpi1 repository make sure the cluster-repo folder exists on each pi
-scp ~/cluster.repo/* username@rpi2:~/cluster.repo
-scp ~/cluster.repo/* username@rpi3:~/cluster.repo
-scp ~/cluster.repo/* username@rpi4:~/cluster.repo
+scp ~/cluster.repo/* alarm@rpi2:~/cluster.repo
+scp ~/cluster.repo/* alarm@rpi3:~/cluster.repo
+scp ~/cluster.repo/* alarm@rpi4:~/cluster.repo
 ```
 
 
@@ -133,7 +134,7 @@ nano /etc/pacman.conf
 # Append this to the conf file
 SigLevel = Never
 [cluster.repo]
-Server = file:///home/username/cluster.repo/
+Server = file:///home/alarm/cluster.repo/
 
 # update pacman
 pacman -Syyu
@@ -193,7 +194,7 @@ sudo systemctl enable nfs-server.service
 ```
 
 ```sh
-# Net log into each Pi and edit
+# Log into each Pi and edit
 # /etc/fstab
 rpi1:/var/cache/pacman/pkg/ /home/[username]/cluster.repo nfs auto 0 0
 rpi1:/srv/nfs/              /home/[username]/nfs          nfs auto 0 0
@@ -204,14 +205,22 @@ rpi1:/srv/nfs/              /home/[username]/nfs          nfs auto 0 0
 sudo systemctl enable nfs-client.target
 rm cluster.repo/*
 
+# You also need up update /etc/pacman.conf to update the alarm user to your username
+SigLevel = Never
+[cluster.repo]
+Server = file:///home/username/cluster.repo/
+
 # Now reboot each machine and everything should be good to go!
 ```
 
 The only downside now is that you have to rebuild the package db anytime you want to install new packages, I created a little script for convenience.
 
+Create a blank script, i called mine jeb-build-repo.sh
+
 ```sh
 #!/bin/sh
-repo-add -n /var/cache/pacman/pkg/cluster.repo.db.tar.gz /var/cache/pacman/pkg/*.pkg.tar.xz
+sudo pacman -Sc
+sudo repo-add -n /var/cache/pacman/pkg/cluster.repo.db.tar.gz /var/cache/pacman/pkg/*.pkg.tar.xz
 
 # Make is executable
 sudo chmod 755 /usr/bin/jeb-build-repo.sh
